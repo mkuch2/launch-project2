@@ -44,7 +44,14 @@ router.get("/", async function (req, res) {
 
     const tokenData = await tokenResponse.json();
     console.log("Spotify token data is: ", tokenData);
-    res.json(tokenData);
+
+    res.cookie("spotify_access_token", tokenData.accessToken, {
+      httpOnly: true,
+      secure: false,
+      maxAge: 3600000,
+    });
+
+    res.redirect("http://localhost:5173/");
   } catch (err) {
     console.error("Error getting access token: ", err);
     return res.status(500).send();
