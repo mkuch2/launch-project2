@@ -13,7 +13,7 @@ export default function Discover() {
   useEffect(() => {
     async function fetchUsers() {
       try {
-        const response = await fetch("http://localhost:5000/api/users", {
+        const response = await fetch("http://localhost:5005/api/users", {
           credentials: "include",
         });
         if (!response.ok) {
