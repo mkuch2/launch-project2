@@ -1,14 +1,24 @@
 export interface PublicUser {
-    id: string; 
+    id: string;
     displayName: string;
-    topArtist: string; 
-    likedSongsCount: number; 
-}
 
+    profilePic: string; //url
+    topArtistAllTime: Artist[];
+    topArtistSixMonths: Artist[];
+    topArtistThisMonth: Artist[];
+    topSongAllTime: Song[];
+    topSongSixMonths: Song[];
+    topSongThisMonth: Song[];
+    likedSongsCount: number;
+}
+export interface Artist
+{
+    name: string;
+}
 export interface Song {
     id: string;
     name: string;
     albumName: string;
     albumCover: string; // picture's url
-    artists: string[]; 
+    artists: Artist[]; 
 }
