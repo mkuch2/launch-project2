@@ -35,9 +35,16 @@ async function createNewUser(id, username) {
 
   try {
     const userRef = doc(db, "users", id);
+
+    const existingUserSnap = await getDoc(userRef);
+
+    if (existingUserSnap.exists()) {
+      return { id, ...existingUserSnap.data() };
+    }
+
     await setDoc(userRef, newUser);
 
-    return { ...newUser, id: id };
+    return { id, ...newUser };
   } catch (err) {
     throw new Error(`Error creating new user: ${err?.message || err}`);
   }
