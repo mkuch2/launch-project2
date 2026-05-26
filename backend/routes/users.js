@@ -1,5 +1,5 @@
 import express from "express";
-import { createNewUser } from "../db/users.js";
+import { createNewUser, getUserById } from "../db/users.js";
 const router = express.Router();
 
 // get api users
@@ -37,6 +37,27 @@ router.get("/", async (req, res) => {
   } catch (err) {
     console.error("Error fetching users:", err);
     res.status(500).json({ error: "Failed to fetch users" });
+  }
+});
+
+router.get("/:userId", async (req, res) => {
+  const id = req.params.userId ?? null;
+
+  if (!id) {
+    return res.status(400).send({ error: "User id required to get user" });
+  }
+
+  try {
+    const user = await getUserById(id);
+
+    if (!user) {
+      return res.status(404).send({ error: "User not found" });
+    }
+
+    console.log("User is: ", user);
+    res.status(200).json({ id: id, ...user });
+  } catch (err) {
+    res.status(500).json(err);
   }
 });
 

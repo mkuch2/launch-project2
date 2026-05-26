@@ -3,8 +3,26 @@
 //   username: string
 // }
 
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, getDoc } from "firebase/firestore";
 import { db } from "../firebase.js";
+
+async function getUserById(id) {
+  if (!id) {
+    throw new Error("ID missing from getUserById");
+  }
+
+  try {
+    const userRef = doc(db, "users", id);
+    const snap = await getDoc(userRef);
+
+    if (!snap.exists()) return null;
+
+    const data = snap.data();
+    return { id, ...data };
+  } catch (err) {
+    throw new Error(`Error fetching user by id: ${err?.message || err}`);
+  }
+}
 
 async function createNewUser(id, username) {
   if (!id || !username) {
@@ -25,4 +43,4 @@ async function createNewUser(id, username) {
   }
 }
 
-export { createNewUser };
+export { createNewUser, getUserById };
