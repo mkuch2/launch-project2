@@ -4,6 +4,12 @@ import "./index.css";
 import App from "./App.tsx";
 import Home from "./pages/Home.tsx";
 import Profile from "./pages/Profile.tsx";
+import LikedSongs from "./pages/LikedSongs.tsx";
+import TopArtists from "./pages/TopArtists.tsx";
+import TopSongs from "./pages/TopSongs.tsx";
+import Discover from "./pages/Discover.tsx";
+import Forum from "./pages/Forum.tsx";
+import Inbox from "./pages/Inbox.tsx";
 import { createBrowserRouter, RouterProvider } from "react-router";
 
 const router = createBrowserRouter([
@@ -18,6 +24,30 @@ const router = createBrowserRouter([
       {
         path: "/profile",
         element: <Profile />,
+      },
+      {
+        path: "/liked-songs",
+        element: <LikedSongs />,
+      },
+      {
+        path: "/top-artists",
+        element: <TopArtists />,
+      },
+      {
+        path: "/top-songs",
+        element: <TopSongs />,
+      },
+      {
+        path: "/discover",
+        element: <Discover />,
+      },
+      {
+        path: "/forum",
+        element: <Forum />,
+      },
+      {
+        path: "/inbox",
+        element: <Inbox />,
       },
     ],
   },
