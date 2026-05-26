@@ -1,9 +1,21 @@
 export interface PublicUser {
-    id: string; 
+    id: string;
     displayName: string;
-    topArtists: string[]; 
-    topSongs: string[];
-    likedSongsCount: number; 
+
+    //  Sourced From Firebase^   vSourced from Spotify
+    profilePic: string; //url
+    topArtistAllTime: Artist[];
+    topArtistSixMonths: Artist[];
+    topArtistThisMonth: Artist[];
+    topSongAllTime: Song[];
+    topSongSixMonths: Song[];
+    topSongThisMonth: Song[];
+    likedSongsCount: number;
+}
+
+export interface Artist
+{
+    name: string;
 }
 
 export interface Song {
@@ -11,5 +23,5 @@ export interface Song {
     name: string;
     albumName: string;
     albumCover: string; // picture's url
-    artists: string[]; 
+    artists: string[];
 }
