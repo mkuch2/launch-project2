@@ -6,6 +6,7 @@ import {
   getDoc,
   getDocs,
   query,
+  orderBy,
   where,
 } from "firebase/firestore";
 
@@ -19,6 +20,51 @@ import {
 //     sent_at: timestamp
 //   }
 // }
+
+async function getConversations(userId) {
+  if (!userId) {
+    throw new Error("User id required to fetch conversations");
+  }
+
+  const conversationsQuery = query(
+    collection(db, "conversations"),
+    where("participants", "array-contains", userId),
+    orderBy("last_message.sent_at", "desc"),
+  );
+
+  const conversationsSnapshot = await getDocs(conversationsQuery);
+
+  return (
+    conversationsSnapshot.docs
+      .map((conversationDoc) => ({
+        id: conversationDoc.id,
+        ...conversationDoc.data(),
+      }))
+      // Sorts according to these rules:
+      // 1) Unread messages come before all other messages
+      // 2) Within unread messages, timestamp dictates order
+      .sort((firstConversation, secondConversation) => {
+        const firstLastMessage = firstConversation.last_message ?? {};
+        const secondLastMessage = secondConversation.last_message ?? {};
+
+        const firstUnreadPriority =
+          firstLastMessage.read === false &&
+          firstLastMessage.sender_id !== userId;
+        const secondUnreadPriority =
+          secondLastMessage.read === false &&
+          secondLastMessage.sender_id !== userId;
+
+        if (firstUnreadPriority !== secondUnreadPriority) {
+          return firstUnreadPriority ? -1 : 1;
+        }
+
+        const firstSentAt = firstLastMessage.sent_at?.toMillis?.() ?? 0;
+        const secondSentAt = secondLastMessage.sent_at?.toMillis?.() ?? 0;
+
+        return secondSentAt - firstSentAt;
+      })
+  );
+}
 
 async function createConversation(
   senderId,
@@ -80,4 +126,4 @@ async function createConversation(
   };
 }
 
-export { createConversation };
+export { createConversation, getConversations };

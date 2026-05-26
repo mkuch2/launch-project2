@@ -1,5 +1,5 @@
 import express from "express";
-import { createConversation } from "../db/conversations.js";
+import { createConversation, getConversations } from "../db/conversations.js";
 
 const router = express.Router();
 
@@ -14,6 +14,26 @@ const router = express.Router();
 //                 }
 //  }
 
+router.get("/", async (req, res) => {
+  //TODO: get user via middleware, not body const userId = req.user?.id;
+  const { userId } = req.body;
+
+  if (!userId) {
+    return res.status(400).json({
+      message: "userId required to fetch conversations",
+    });
+  }
+
+  try {
+    const conversations = await getConversations(userId);
+    return res.status(200).json(conversations);
+  } catch (err) {
+    console.error("Error when attempting to fetch conversations: ", err);
+    return res.status(500).json({
+      message: "Error occurred when fetching conversations. Please try again.",
+    });
+  }
+});
 router.post("/", async (req, res) => {
   // TODO: get sender with auth middleware rather than body const senderId = req.user.id;
   const { senderId, recipientId, initialMessage } = req.body;
