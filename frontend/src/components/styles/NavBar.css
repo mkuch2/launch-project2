@@ -1,28 +1,15 @@
-nav {
-  display: flex;
-  gap: 0.5rem;
-  margin-left: auto;
-}
-
 .nav-links a {
   color: #2c2c2c;
   text-decoration: none;
-  padding: 0.5rem;
+  padding: 0.35rem 0.5rem;
   border: 1px solid transparent;
   border-radius: 10px;
   box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
 }
 
-.nav-links a {
-  color: #2c2c2c;
-  text-decoration: none;
-  padding: 0.5rem;
-  border: 1px solid transparent;
-  border-radius: 10px;
-  box-sizing: border-box;
-}
-
-.nav-links a:hover {
+.nav-links a:not(.nav-icon):not(.profile-link):hover {
   background-color: #f5f5f5;
   border-color: #f5f5f5;
 }
@@ -40,9 +27,27 @@ nav {
 
 .nav-links {
   display: flex;
+  align-items: center;
   gap: 0.5rem;
+  margin-left: auto;
 }
 
 .nav-icon {
   margin-right: auto;
+}
+
+.profile-picture {
+  width: 50px;
+  height: 50px;
+  display: block;
+  object-fit: cover;
+  border-radius: 50%;
+  flex: 0 0 50px;
+}
+
+.profile-picture--fallback {
+  border-radius: 0;
+  background: #ffffff;
+  border: 1px solid #d4d4d4;
+  box-sizing: border-box;
 }

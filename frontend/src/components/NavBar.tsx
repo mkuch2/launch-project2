@@ -2,6 +2,8 @@ import { Link } from "react-router";
 import "./styles/NavBar.css";
 import SpotifyIcon from "../assets/spotify-icon.svg";
 
+const profileImageSrc = "";
+
 export default function NavBar() {
   return (
     <div className="nav-bar">
@@ -16,6 +18,20 @@ export default function NavBar() {
         <Link to="/discover">Discover</Link>
         <Link to="/forum">Forum</Link>
         <Link to="/inbox">Inbox</Link>
+        <Link className="profile-link" to="/profile">
+          {profileImageSrc ? (
+            <img
+              className="profile-picture"
+              src={profileImageSrc}
+              alt="profile picture"
+            />
+          ) : (
+            <span
+              className="profile-picture profile-picture--fallback"
+              aria-hidden="true"
+            />
+          )}
+        </Link>
       </nav>
     </div>
   );
