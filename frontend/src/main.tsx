@@ -11,6 +11,7 @@ import Discover from "./pages/Discover.tsx";
 import Forum from "./pages/Forum.tsx";
 import Inbox from "./pages/Inbox.tsx";
 import { createBrowserRouter, RouterProvider } from "react-router";
+import Login from "./pages/Login.tsx";
 
 const router = createBrowserRouter([
   {
@@ -53,6 +54,7 @@ const router = createBrowserRouter([
         path: "/inbox",
         element: <Inbox />,
       },
+      { path: "/login", element: <Login /> },
     ],
   },
 ]);
