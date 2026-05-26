@@ -1,7 +1,8 @@
 export interface PublicUser {
     id: string; 
     displayName: string;
-    topArtist: string; 
+    topArtists: string[]; 
+    topSongs: string[];
     likedSongsCount: number; 
 }
 
