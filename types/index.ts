@@ -43,6 +43,16 @@ export interface Forum {
   name: string;
 }
 
+export interface Post {
+  id: string;
+  author: PrivateUser;
+  title: string;
+  content: string;
+  likes: Number;
+  createdAt: string;
+  forumId: string;
+}
+
 export interface Artist {
   name: string;
 }

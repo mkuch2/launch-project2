@@ -45,7 +45,7 @@ function getSentAtMillis(sentAt: unknown) {
 //     content: string,
 //     read: bool,
 //     sender_id: string,
-//     sent_at: timestamp
+//     sent_at: string
 //   }
 // }
 
