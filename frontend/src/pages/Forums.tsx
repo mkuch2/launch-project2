@@ -7,11 +7,16 @@ import "./styles/Forums.css";
 import { Link } from "react-router";
 import Loading from "../components/ui/Loading";
 import CreateForumForm from "../components/ui/CreateForumForm";
+import { useContext } from "react";
+import { AuthContext } from "../AuthContext";
+import { Timestamp } from "firebase/firestore";
 
 export default function Forums() {
+  const { user } = useContext(AuthContext);
   const [forums, setForums] = useState<Forum[]>([]);
   const [loading, setLoading] = useState(false);
   const [creatingForum, setCreatingForum] = useState(false);
+  const [forumName, setForumName] = useState("");
 
   useEffect(() => {
     const fetchForums = async () => {
@@ -31,6 +36,49 @@ export default function Forums() {
 
     fetchForums();
   }, []);
+
+  const handleCreateForum = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (!user || !forumName.trim()) {
+      return;
+    }
+
+    const newForumTempId = `new-${Date.now()}`;
+    const newForumTemp: Forum = {
+      id: newForumTempId,
+      author: { id: user.id, displayName: user.displayName },
+      name: forumName.trim(),
+      createdAt: Timestamp.now(),
+    };
+
+    setForums((prevForums) => [newForumTemp, ...prevForums]);
+    setForumName("");
+    setCreatingForum(false);
+
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/forums`,
+        {
+          author: { id: user.id, displayName: user.displayName },
+          name: newForumTemp.name,
+        },
+      );
+
+      const createdForum = response.data as Forum;
+
+      setForums((prevForums) =>
+        prevForums.map((forum) =>
+          forum.id === newForumTempId ? { ...forum, ...createdForum } : forum,
+        ),
+      );
+    } catch (err) {
+      console.error("Error posting forum:", err);
+      setForums((prevForums) =>
+        prevForums.filter((forum) => forum.id !== newForumTempId),
+      );
+    }
+  };
 
   if (loading) {
     return <Loading />;
@@ -56,9 +104,12 @@ export default function Forums() {
       </div>
 
       {creatingForum ? (
-        <>
-          <CreateForumForm setCreatingForm={setCreatingForum} />
-        </>
+        <CreateForumForm
+          forumName={forumName}
+          setForumName={setForumName}
+          onSubmit={handleCreateForum}
+          setCreatingForm={setCreatingForum}
+        />
       ) : (
         <button
           className="forum-create-button"
