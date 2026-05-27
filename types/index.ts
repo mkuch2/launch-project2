@@ -16,13 +16,30 @@ export interface PublicUser {
 export interface PrivateUser {
   id: string;
   displayName: string;
-  username?: string;
+}
+
+export interface Conversation {
+  id: string;
+  last_message: {
+    content: string;
+    read: boolean;
+    sender_id: string;
+    sent_at: string;
+  };
+  participants: string[];
+}
+
+export interface Message {
+  id: string;
+  content: string;
+  conversation_id: string;
+  sender_id: string;
+  sent_at: string;
 }
 
 export interface Artist {
   name: string;
 }
-
 export interface Song {
   id: string;
   name: string;

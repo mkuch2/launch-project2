@@ -1,5 +1,6 @@
 import express from "express";
 import { createConversation, getConversations } from "../db/conversations.js";
+import type { RequestWithUser } from "../types/request.js";
 
 const router = express.Router();
 
@@ -14,7 +15,7 @@ const router = express.Router();
 //                 }
 //  }
 
-router.get("/", async (req, res) => {
+router.get("/", async (req: RequestWithUser, res) => {
   const userId = req.user?.id ?? req.body.userId;
 
   if (!userId) {
@@ -34,7 +35,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.post("/", async (req, res) => {
+router.post("/", async (req: RequestWithUser, res) => {
   const senderId = req.user?.id ?? req.body.senderId;
   const { recipientId, initialMessage } = req.body;
 
@@ -59,13 +60,6 @@ router.post("/", async (req, res) => {
     );
     return res.status(201).json(newConversation);
   } catch (err) {
-    if (err.code === "CONVERSATION_ALREADY_EXISTS") {
-      return res.status(409).json({
-        message: "Conversation already exists between these users",
-      });
-    }
-
-    console.error("Error when attempting to create new conversation: ", err);
     return res.status(500).json({
       message: "Error occurred when creating conversation. Please try again.",
     });

@@ -1,8 +1,8 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import { useNavigate } from "react-router";
 import axios from "axios";
 import { AuthContext } from "../AuthContext";
-import type { PrivateUser } from "../types";
+import type { PrivateUser } from "../../../types";
 
 export default function LoginCallback() {
   const { user, login } = useContext(AuthContext);
