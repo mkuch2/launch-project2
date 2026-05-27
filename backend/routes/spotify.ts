@@ -10,9 +10,15 @@ router.get("/login", function (req, res) {
   const scope =
     "user-read-private user-read-email user-library-read user-top-read";
 
+  const clientId = process.env.SPOTIFY_WEBAPI_ID;
+
+  if (!clientId) {
+    throw new Error("Missing SPOTIFY_WEBAPI_ID");
+  }
+
   const searchParams = new URLSearchParams({
     response_type: "code",
-    client_id: process.env.SPOTIFY_WEBAPI_ID,
+    client_id: clientId,
     scope,
     redirect_uri:
       process.env.SPOTIFY_WEBAPI_REDIRECT_URI ||
@@ -28,7 +34,7 @@ router.get("/login", function (req, res) {
   );
 });
 
-router.get("/user-profile", async function (req, res) {
+router.get("/user-profile", async function (req: express.Request, res: express.Response) {
   console.log("Cookies: ", req.cookies);
   const accessToken = req.cookies.spotify_access_token;
 
@@ -53,7 +59,7 @@ router.get("/user-profile", async function (req, res) {
   }
 });
 
-router.get("/top-artists", async (req, res) => {
+router.get("/top-artists", async (req: express.Request, res: express.Response) => {
   try {
     const accessToken = req.cookies.spotify_access_token;
     const timeRange = req.query.timeRange || "long_term";

@@ -31,7 +31,7 @@ export default function TopArtists() {
           {
             params: { timeRange },
             withCredentials: true,
-          }
+          },
         );
 
         setArtists(response.data.items || response.data || []);
@@ -50,7 +50,7 @@ export default function TopArtists() {
     <main className="music-page">
       <section className="music-header">
         <h1 className="music-title">Top Artists</h1>
-        <p className="music-username">{user?.displayName || user?.username || "Username"}</p>
+        <p className="music-username">{user?.displayName || "Username"}</p>
       </section>
 
       <div className="filter-buttons">
@@ -84,7 +84,9 @@ export default function TopArtists() {
           {artists.map((artist) => (
             <article className="music-card" key={artist.id}>
               <img
-                src={artist.images?.[0]?.url || "https://via.placeholder.com/300"}
+                src={
+                  artist.images?.[0]?.url || "https://via.placeholder.com/300"
+                }
                 alt={artist.name}
               />
 
