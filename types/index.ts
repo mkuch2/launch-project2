@@ -37,6 +37,12 @@ export interface Message {
   sent_at: string;
 }
 
+export interface Forum {
+  id: string;
+  author: PrivateUser;
+  name: string;
+}
+
 export interface Artist {
   name: string;
 }
