@@ -58,7 +58,7 @@ export default function TopSongs() {
         <h1 className="music-title">Top Songs</h1>
 
         <p className="music-username">
-          {user?.displayName || "Username"}
+          {user?.displayName || user?.username || "Username"}
         </p>
       </section>
 
