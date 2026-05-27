@@ -12,6 +12,7 @@ import Forum from "./pages/Forum.tsx";
 import Inbox from "./pages/Inbox.tsx";
 import { createBrowserRouter, RouterProvider } from "react-router";
 import Login from "./pages/Login.tsx";
+import { AuthProvider } from "./AuthContext.tsx";
 
 const router = createBrowserRouter([
   {
@@ -61,6 +62,8 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>
   </StrictMode>,
 );

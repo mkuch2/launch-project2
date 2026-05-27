@@ -62,9 +62,10 @@ router.get("/:userId", async (req, res) => {
 });
 
 router.post("/", async (req, res) => {
-  const { userId, username } = req.body;
+  const { userId, displayName } = req.body;
+
   try {
-    const newUser = await createNewUser(userId, username);
+    const newUser = await createNewUser(userId, displayName);
     res.status(201).json(newUser);
   } catch (err) {
     console.error("Error creating user:", err);
