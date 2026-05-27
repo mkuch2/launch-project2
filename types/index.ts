@@ -1,7 +1,7 @@
 export interface PublicUser {
   id: string;
   displayName: string;
-  username: string; // backend uses username
+  username?: string; // backend uses username
 
   //  Sourced From Firebase^   vSourced from Spotify
   profilePic: string; //url
@@ -17,7 +17,7 @@ export interface PublicUser {
 export interface PrivateUser {
   id: string;
   displayName: string;
-  username: string; // backend uses username
+  username?: string; // backend uses username
 }
 
 export interface Conversation {
