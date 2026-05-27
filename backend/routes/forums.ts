@@ -5,12 +5,13 @@ import {
   editForum,
   getForums,
 } from "../db/forums.js";
+import type { Forum } from "../../types/index.js";
 
 const router = express.Router();
 
 router.get("/", async (req, res) => {
   try {
-    const forums = await getForums();
+    const forums = (await getForums()) as Forum[];
     return res.status(200).json(forums);
   } catch (err) {
     console.error("Error attempting to get forums:", err);

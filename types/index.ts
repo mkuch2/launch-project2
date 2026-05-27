@@ -41,6 +41,7 @@ export interface Forum {
   id: string;
   author: PrivateUser;
   name: string;
+  createdAt: string;
 }
 
 export interface Post {
