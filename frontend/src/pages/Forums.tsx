@@ -53,7 +53,7 @@ export default function Forums() {
           <span>No forums found</span>
         )}
       </div>
-      {/* <CreateForumForm /> */}
+      <CreateForumForm />
     </div>
   );
 }
