@@ -10,12 +10,15 @@ import TopSongs from "./pages/TopSongs.tsx";
 import Discover from "./pages/Discover.tsx";
 import Forum from "./pages/Forum.tsx";
 import Inbox from "./pages/Inbox.tsx";
-import { createBrowserRouter, RouterProvider } from "react-router";
+import { createBrowserRouter, Outlet, RouterProvider } from "react-router";
 import Login from "./pages/Login.tsx";
 import { AuthProvider } from "./AuthContext.tsx";
 import RequireAuth from "./components/RequireAuth.tsx";
 import AuthAxiosProvider from "./components/AuthAxiosProvider.tsx";
 import LoginCallback from "./pages/LoginCallback.tsx";
+
+const skipProtectedRoutes =
+  import.meta.env.VITE_SKIP_PROTECTED_ROUTES === "true";
 
 const router = createBrowserRouter([
   {
@@ -28,7 +31,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/",
-    element: <RequireAuth />,
+    element: skipProtectedRoutes ? <Outlet /> : <RequireAuth />,
     children: [
       {
         element: <App />,
