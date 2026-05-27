@@ -26,7 +26,7 @@ export interface Conversation {
     content: string;
     read: boolean;
     sender_id: string;
-    sent_at: string;
+    sent_at: Timestamp | FieldValue;
   };
   participants: string[];
 }
