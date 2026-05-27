@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { AuthContext } from "../AuthContext";
-import "../styles/musicPages.css";
+import "./styles/musicPages.css";
 
 type TimeRange = "long_term" | "medium_term" | "short_term";
 
