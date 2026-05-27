@@ -1,5 +1,5 @@
 import { useContext, useEffect } from "react";
-import { useNavigate, Link } from "react-router";
+import { useNavigate } from "react-router";
 import { AuthContext } from "../AuthContext";
 
 export default function Login() {
