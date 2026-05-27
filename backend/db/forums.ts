@@ -11,7 +11,7 @@ import {
   orderBy,
   serverTimestamp,
 } from "firebase/firestore";
-import type { PrivateUser } from "../../types";
+import type { Forum, PrivateUser } from "../../types";
 // Forum {
 //   id: string,
 //   author: {
@@ -19,8 +19,27 @@ import type { PrivateUser } from "../../types";
 //     displayName: string
 //   }
 //   name: string,
-//   createdAt: string
+//   createdAt: Timestamp
 // }
+
+async function getForum(forumId: string) {
+  if (!forumId) {
+    throw new Error("forumId is required");
+  }
+
+  try {
+    const forumRef = doc(db, "forums", forumId);
+    const snap = await getDoc(forumRef);
+
+    if (!snap.exists()) return null;
+
+    const data = snap.data();
+    return { id: forumId, ...data } as Forum;
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    throw new Error(`Error fetching forum by id: ${message || err}`);
+  }
+}
 
 async function getForums() {
   const forumsQuery = query(
@@ -66,4 +85,4 @@ async function deleteForum(forumId: string) {
   return { id: forumId };
 }
 
-export { getForums, createForum, editForum, deleteForum };
+export { getForum, getForums, createForum, editForum, deleteForum };

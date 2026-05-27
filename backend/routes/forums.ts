@@ -3,6 +3,7 @@ import {
   createForum,
   deleteForum,
   editForum,
+  getForum,
   getForums,
 } from "../db/forums.js";
 import type { Forum } from "../../types/index.js";
@@ -17,6 +18,33 @@ router.get("/", async (req, res) => {
     console.error("Error attempting to get forums:", err);
     return res.status(500).json({
       error: "Server error getting forums",
+    });
+  }
+});
+
+router.get("/:forumId", async (req, res) => {
+  const forumId = req.params.forumId ?? null;
+
+  if (!forumId) {
+    return res.status(400).json({
+      error: "forumId required to fetch forum",
+    });
+  }
+
+  try {
+    const forum = await getForum(forumId);
+
+    if (!forum) {
+      return res.status(404).json({
+        error: "Forum not found",
+      });
+    }
+
+    return res.status(200).json(forum);
+  } catch (err) {
+    console.error("Error attempting to get forum:", err);
+    return res.status(500).json({
+      error: "Server error getting forum",
     });
   }
 });
