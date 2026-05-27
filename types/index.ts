@@ -12,14 +12,13 @@ export interface PublicUser {
   topSongSixMonths: Song[];
   topSongThisMonth: Song[];
   likedSongsCount: number;
-  images?: { url: string }[];
 }
 
 export interface PrivateUser {
   id: string;
-  displayName: string;
-  username?: string; // backend uses username
-  images?: { url: string }[];
+  username?: string;
+  displayName?: string;
+  profilePic?: string;
 }
 
 export interface Conversation {

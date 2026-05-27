@@ -8,7 +8,7 @@ import SpotifyIcon from "../assets/spotify-icon.svg";
 export default function NavBar() {
   const { user } = useContext(AuthContext);
 
-  const profileImage = user?.images?.[0]?.url;
+  const profileImage = user?.profilePic;
   const displayName = user?.displayName || user?.username || "U";
 
   return (
@@ -19,10 +19,7 @@ export default function NavBar() {
       </NavLink>
 
       <nav className="nav-links">
-        <NavLink to="/" end>
-          Home
-        </NavLink>
-
+        <NavLink to="/" end>Home</NavLink>
         <NavLink to="/liked-songs">Liked</NavLink>
         <NavLink to="/top-artists">Top Artists</NavLink>
         <NavLink to="/top-songs">Top Songs</NavLink>
@@ -30,19 +27,21 @@ export default function NavBar() {
         <NavLink to="/forum">Forum</NavLink>
         <NavLink to="/inbox">Inbox</NavLink>
 
-        <NavLink className="profile-link" to="/profile">
-          {profileImage ? (
-            <img
-              className="profile-picture"
-              src={profileImage}
-              alt="profile"
-            />
-          ) : (
-            <span className="profile-fallback">
-              {displayName.charAt(0).toUpperCase()}
-            </span>
-          )}
-        </NavLink>
+        {user ? (
+          <NavLink className="profile-link" to="/profile">
+            {profileImage ? (
+              <img className="profile-picture" src={profileImage} alt="profile" />
+            ) : (
+              <span className="profile-fallback">
+                {displayName.charAt(0).toUpperCase()}
+              </span>
+            )}
+          </NavLink>
+        ) : (
+          <NavLink className="login-button" to="/login">
+            Login
+          </NavLink>
+        )}
       </nav>
     </div>
   );
