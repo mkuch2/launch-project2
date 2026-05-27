@@ -19,7 +19,7 @@ import {
 //   sent_at: timestamp
 // }
 
-async function getMessages(conversationId : string) {
+async function getMessages(conversationId: string) {
   if (!conversationId) {
     throw new Error("Conversation id required to fetch messages");
   }
@@ -43,7 +43,11 @@ async function getMessages(conversationId : string) {
   }
 }
 
-async function sendNewMessage(userId : string, conversationId : string, content : string) {
+async function sendNewMessage(
+  userId: string,
+  conversationId: string,
+  content: string,
+) {
   if (!userId || !conversationId || !content) {
     throw new Error("userId, conversationId, and content are required");
   }
@@ -78,7 +82,7 @@ async function sendNewMessage(userId : string, conversationId : string, content 
     return {
       id: messageRef.id,
       ...newMessage,
-      sent_at: messageData.sent_at,
+      sent_at: messageData!.sent_at,
     };
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
