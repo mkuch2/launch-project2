@@ -24,7 +24,7 @@ export default function NavBar() {
         <NavLink to="/top-artists">Top Artists</NavLink>
         <NavLink to="/top-songs">Top Songs</NavLink>
         <NavLink to="/discover">Discover</NavLink>
-        <NavLink to="/forum">Forum</NavLink>
+        <NavLink to="/forums">Forums</NavLink>
         <NavLink to="/inbox">Inbox</NavLink>
 
         {user ? (

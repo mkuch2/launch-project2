@@ -9,6 +9,7 @@ import TopArtists from "./pages/TopArtists.tsx";
 import TopSongs from "./pages/TopSongs.tsx";
 import Discover from "./pages/Discover.tsx";
 import Forum from "./pages/Forum.tsx";
+import Forums from "./pages/Forums.tsx";
 import Inbox from "./pages/Inbox.tsx";
 import { createBrowserRouter, Outlet, RouterProvider } from "react-router";
 import Login from "./pages/Login.tsx";
@@ -65,7 +66,11 @@ const router = createBrowserRouter([
             element: <Discover />,
           },
           {
-            path: "forum",
+            path: "forums",
+            element: <Forums />,
+          },
+          {
+            path: "forum/:forumId",
             element: <Forum />,
           },
           {

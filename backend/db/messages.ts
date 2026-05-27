@@ -16,7 +16,7 @@ import {
 //   content: string
 //   conversation_id: string
 //   sender_id: string
-//   sent_at: string
+//   sent_at: Timestamp
 // }
 
 async function getMessages(conversationId: string) {
