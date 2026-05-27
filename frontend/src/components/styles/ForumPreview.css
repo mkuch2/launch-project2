@@ -1,0 +1,35 @@
+a {
+  text-decoration: none;
+}
+
+.forum-preview {
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  padding: 1.25rem;
+  border-radius: 12px;
+  border: 1px solid #ddd;
+}
+
+.forum-preview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.forum-preview-name {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.forum-preview-author {
+  color: #777;
+  font-size: 0.95rem;
+}
+
+.forum-preview-timestamp {
+  color: #777;
+  font-size: 0.9rem;
+  text-align: right;
+}

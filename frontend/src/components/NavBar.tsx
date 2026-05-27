@@ -16,7 +16,7 @@ export default function NavBar() {
         <Link to="/top-artists">Top Artists</Link>
         <Link to="/top-songs">Top Songs</Link>
         <Link to="/discover">Discover</Link>
-        <Link to="/forum">Forum</Link>
+        <Link to="/forums">Forums</Link>
         <Link to="/inbox">Inbox</Link>
         <Link className="profile-link" to="/profile">
           {profileImageSrc ? (
