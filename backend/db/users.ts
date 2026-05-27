@@ -1,12 +1,12 @@
 // User {
 //   id: string,
-//   username: string
+//   displayName: string
 // }
 
 import { doc, setDoc, getDoc } from "firebase/firestore";
 import { db } from "../firebase.js";
 
-async function getUserById(id : string) {
+async function getUserById(id: string) {
   if (!id) {
     throw new Error("ID missing from getUserById");
   }
@@ -25,13 +25,17 @@ async function getUserById(id : string) {
   }
 }
 
-async function createNewUser(id : string, username : string, images : { url: string }[]) {
-  if (!id || !username) {
-    throw new Error("ID or Username missing from create new user");
+async function createNewUser(
+  id: string,
+  displayName: string,
+  images: { url: string }[],
+) {
+  if (!id || !displayName) {
+    throw new Error("ID or display name missing from create new user");
   }
 
   const newUser = {
-    username,
+    displayName,
     profilePic: images?.[0]?.url || "",
   };
 
