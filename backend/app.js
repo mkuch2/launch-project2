@@ -5,6 +5,7 @@ import { router as spotifyRouter } from "./routes/spotify.js";
 import { router as callbackRouter } from "./routes/callback.js";
 import { router as conversationsRouter } from "./routes/conversations.js";
 import { router as usersRouter } from "./routes/users.js";
+import { router as messagesRouter } from "./routes/messages.js";
 import { attachUser } from "./middleware/attachUser.js";
 
 dotenv.config();
@@ -25,6 +26,7 @@ app.use("/spotify", spotifyRouter);
 app.use("/callback", callbackRouter);
 app.use("/conversations", conversationsRouter);
 app.use("/api/users", usersRouter);
+app.use("/messages", messagesRouter);
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
