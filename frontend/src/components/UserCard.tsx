@@ -39,16 +39,16 @@ export default function UserCard({ user }: UserCardProps) {
       <div className="user-card__header">
         <div
           className="user-card__avatar"
-          style={{ backgroundColor: getAvatarColor(user.displayName) }}
+          style={{ backgroundColor: getAvatarColor(user.displayName ?? user.username ?? "") }}
         >
-          {getInitials(user.displayName)}
+          {getInitials(user.displayName ?? user.username ?? "")}
         </div>
-        <span className="user-card__name">{user.displayName}</span>
+        <span className="user-card__name">{user.displayName ?? user.username}</span>
       </div>
 
       <div className="user-card__info">
         <span className="user-card__details">
-          Top artist: {user.topArtistAllTime[0]?.name ?? "N/A"} | {user.likedSongsCount} liked songs
+          Top artist: {user.topArtistAllTime?.[0]?.name ?? "N/A"} | {user.likedSongsCount ?? 0} liked songs
         </span>
         <button
           className="user-card__button"

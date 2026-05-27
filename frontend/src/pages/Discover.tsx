@@ -31,7 +31,7 @@ export default function Discover() {
   }, []);
 
   const filteredUsers = users.filter((user) =>
-    user.displayName.toLowerCase().includes(searchQuery.toLowerCase()),
+    (user.displayName ?? user.username ?? "").toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (

@@ -1,40 +1,22 @@
 import express from "express";
-import { createNewUser, getUserById } from "../db/users.js";
-import type { PrivateUser } from "../../types/index.js";
+import { db } from "../firebase.js";
+import { collection, getDocs, query, where } from "firebase/firestore";
+
 const router = express.Router();
 
 // get api users
 // return public user profiles
 router.get("/", async (req, res) => {
   try {
-    //Todo: read real data from firebase
-    const mockUsers = [
-      {
-        id: "1",
-        displayName: "Sara Lewis",
-        profilePic: "",
-        topArtistAllTime: [{ name: "Taylor Swift" }],
-        topArtistSixMonths: [],
-        topArtistThisMonth: [],
-        topSongAllTime: [],
-        topSongSixMonths: [],
-        topSongThisMonth: [],
-        likedSongsCount: 87,
-      },
-      {
-        id: "2",
-        displayName: "Marcus River",
-        profilePic: "",
-        topArtistAllTime: [{ name: "Drake" }],
-        topArtistSixMonths: [],
-        topArtistThisMonth: [],
-        topSongAllTime: [],
-        topSongSixMonths: [],
-        topSongThisMonth: [],
-        likedSongsCount: 124,
-      },
-    ];
-    res.json(mockUsers);
+    const usersRef = collection(db, "users");
+    const snapshot = await getDocs(usersRef);
+
+    const users = snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+
+    res.json(users);
   } catch (err) {
     console.error("Error fetching users:", err);
     res.status(500).json({ error: "Failed to fetch users" });
