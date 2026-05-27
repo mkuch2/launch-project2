@@ -60,7 +60,7 @@ export default function TopSongs() {
           className={timeRange === "medium_term" ? "active" : ""}
           onClick={() => setTimeRange("medium_term")}
         >
-          Last Year
+          Last 6 Months
         </button>
 
         <button
