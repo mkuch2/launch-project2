@@ -23,3 +23,10 @@
 .forum-create-button:hover {
   background-color: #111;
 }
+
+.forums-create-new {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}

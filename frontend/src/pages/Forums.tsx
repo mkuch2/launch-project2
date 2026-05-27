@@ -103,21 +103,23 @@ export default function Forums() {
         )}
       </div>
 
-      {creatingForum ? (
-        <CreateForumForm
-          forumName={forumName}
-          setForumName={setForumName}
-          onSubmit={handleCreateForum}
-          setCreatingForm={setCreatingForum}
-        />
-      ) : (
-        <button
-          className="forum-create-button"
-          onClick={() => setCreatingForum(true)}
-        >
-          Create new forum
-        </button>
-      )}
+      <div className="forums-create-new">
+        {creatingForum ? (
+          <CreateForumForm
+            forumName={forumName}
+            setForumName={setForumName}
+            onSubmit={handleCreateForum}
+            setCreatingForm={setCreatingForum}
+          />
+        ) : (
+          <button
+            className="forum-create-button"
+            onClick={() => setCreatingForum(true)}
+          >
+            Create new forum
+          </button>
+        )}
+      </div>
     </div>
   );
 }
