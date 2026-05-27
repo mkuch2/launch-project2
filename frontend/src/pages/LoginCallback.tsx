@@ -23,6 +23,7 @@ export default function LoginCallback() {
         const profile: PrivateUser = {
           id: profileResponse.data.id,
           displayName: profileResponse.data.display_name,
+          images: profileResponse.data.images,
         };
 
         let account: PrivateUser;
@@ -42,6 +43,7 @@ export default function LoginCallback() {
             {
               userId: profile.id,
               displayName: profile.displayName,
+              images: profile.images,
             },
           );
 

@@ -16,8 +16,9 @@ export interface PublicUser {
 
 export interface PrivateUser {
   id: string;
-  displayName: string;
-  username?: string; // backend uses username
+  username?: string;
+  displayName?: string;
+  profilePic?: string;
 }
 
 export interface Conversation {

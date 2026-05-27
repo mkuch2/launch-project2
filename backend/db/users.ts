@@ -25,13 +25,14 @@ async function getUserById(id : string) {
   }
 }
 
-async function createNewUser(id : string, username : string ) {
+async function createNewUser(id : string, username : string, images : { url: string }[]) {
   if (!id || !username) {
     throw new Error("ID or Username missing from create new user");
   }
 
   const newUser = {
     username,
+    profilePic: images?.[0]?.url || "",
   };
 
   try {

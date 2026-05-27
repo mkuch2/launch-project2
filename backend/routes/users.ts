@@ -63,18 +63,25 @@ router.get("/:userId", async (req, res) => {
 });
 
 router.post("/", async (req, res) => {
-  const { userId, displayName } = req.body;
+  const { userId, displayName, images } = req.body;
 
   try {
-    const newUser = await createNewUser(userId, displayName);
+    const newUser = await createNewUser(
+      userId,
+      displayName,
+      images,
+    );
+
     res.status(201).json(newUser);
   } catch (err) {
     if (err instanceof Error) {
       console.error("Error creating user:", err);
+
       return res
         .status(500)
         .json({ error: err.message || "Failed to create user" });
     }
+
     return res.status(500).send({ error: "Unknown error occured" });
   }
 });
