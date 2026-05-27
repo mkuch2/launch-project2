@@ -3,8 +3,13 @@ import { useContext } from "react";
 import { AuthContext } from "../../AuthContext";
 import axios from "axios";
 import "./styles/CreateForumForm.css";
+import { X } from "lucide-react";
 
-export default function CreateForumForm() {
+export default function CreateForumForm({
+  setCreatingForm,
+}: {
+  setCreatingForm: (value: React.SetStateAction<boolean>) => void;
+}) {
   const { user } = useContext(AuthContext);
 
   const [forumName, setForumName] = useState("");
@@ -28,7 +33,13 @@ export default function CreateForumForm() {
 
   return (
     <form className="create-forum-form" onSubmit={handleSubmit}>
-      <h3 className="create-forum-form__title">Create a new forum</h3>
+      <div className="create-forum-form__header">
+        <h3 className="create-forum-form__title">Create a new forum</h3>
+        <X
+          style={{ cursor: "pointer" }}
+          onClick={() => setCreatingForm(false)}
+        />
+      </div>
       <label className="create-forum-form__label" htmlFor="forum-name">
         Forum name
       </label>

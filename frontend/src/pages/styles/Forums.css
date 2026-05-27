@@ -7,3 +7,19 @@
 .forum-page {
   padding: 3rem;
 }
+
+.forum-create-button {
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  border: none;
+  border-radius: 999px;
+  background-color: #222;
+  color: white;
+  padding: 0.65rem 1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.forum-create-button:hover {
+  background-color: #111;
+}

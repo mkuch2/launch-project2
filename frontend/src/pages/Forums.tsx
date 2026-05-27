@@ -11,6 +11,7 @@ import CreateForumForm from "../components/ui/CreateForumForm";
 export default function Forums() {
   const [forums, setForums] = useState<Forum[]>([]);
   const [loading, setLoading] = useState(false);
+  const [creatingForum, setCreatingForum] = useState(false);
 
   useEffect(() => {
     const fetchForums = async () => {
@@ -53,7 +54,19 @@ export default function Forums() {
           <span>No forums found</span>
         )}
       </div>
-      <CreateForumForm />
+
+      {creatingForum ? (
+        <>
+          <CreateForumForm setCreatingForm={setCreatingForum} />
+        </>
+      ) : (
+        <button
+          className="forum-create-button"
+          onClick={() => setCreatingForum(true)}
+        >
+          Create new forum
+        </button>
+      )}
     </div>
   );
 }
