@@ -16,6 +16,7 @@ export interface PublicUser {
 export interface PrivateUser {
   id: string;
   displayName: string;
+  username?: string;
 }
 
 export interface Artist {
