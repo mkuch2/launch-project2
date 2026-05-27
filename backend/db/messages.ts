@@ -19,7 +19,7 @@ import {
 //   sent_at: timestamp
 // }
 
-async function getMessages(conversationId) {
+async function getMessages(conversationId : string) {
   if (!conversationId) {
     throw new Error("Conversation id required to fetch messages");
   }
@@ -38,11 +38,12 @@ async function getMessages(conversationId) {
       ...messageDoc.data(),
     }));
   } catch (err) {
-    throw new Error(err);
+    const message = err instanceof Error ? err.message : String(err);
+    throw new Error(message);
   }
 }
 
-async function sendNewMessage(userId, conversationId, content) {
+async function sendNewMessage(userId : string, conversationId : string, content : string) {
   if (!userId || !conversationId || !content) {
     throw new Error("userId, conversationId, and content are required");
   }
@@ -80,7 +81,8 @@ async function sendNewMessage(userId, conversationId, content) {
       sent_at: messageData.sent_at,
     };
   } catch (err) {
-    throw new Error(`Error creating new message: ${err?.message || err}`);
+    const message = err instanceof Error ? err.message : String(err);
+    throw new Error(`Error creating new message: ${message || err}`);
   }
 }
 
