@@ -37,7 +37,7 @@ export default function TopSongs() {
           {
             params: { timeRange },
             withCredentials: true,
-          }
+          },
         );
 
         setSongs(response.data.items || response.data || []);
@@ -57,9 +57,7 @@ export default function TopSongs() {
       <section className="music-header">
         <h1 className="music-title">Top Songs</h1>
 
-        <p className="music-username">
-          {user?.displayName || user?.username || "Username"}
-        </p>
+        <p className="music-username">{user?.displayName || "Username"}</p>
       </section>
 
       <div className="filter-buttons">
@@ -104,9 +102,8 @@ export default function TopSongs() {
               <h2>{song.name}</h2>
 
               <p>
-                {song.artists
-                  ?.map((artist) => artist.name)
-                  .join(", ") || "Artist"}
+                {song.artists?.map((artist) => artist.name).join(", ") ||
+                  "Artist"}
               </p>
             </article>
           ))}

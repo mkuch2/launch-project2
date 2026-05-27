@@ -1,5 +1,5 @@
 import { createContext, useState } from "react";
-import type { PrivateUser } from "./types";
+import type { PrivateUser } from "../../types";
 import type { ReactNode } from "react";
 
 interface AuthContextType {

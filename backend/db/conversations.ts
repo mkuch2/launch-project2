@@ -10,6 +10,34 @@ import {
   where,
 } from "firebase/firestore";
 
+import type { Conversation } from "../../types/index.js";
+
+type TimestampLike = {
+  toMillis: () => number;
+};
+
+function getSentAtMillis(sentAt: unknown) {
+  if (!sentAt) {
+    return 0;
+  }
+
+  if (typeof sentAt === "string") {
+    const parsedSentAt = Date.parse(sentAt);
+    return Number.isNaN(parsedSentAt) ? 0 : parsedSentAt;
+  }
+
+  if (
+    typeof sentAt === "object" &&
+    sentAt !== null &&
+    "toMillis" in sentAt &&
+    typeof (sentAt as TimestampLike).toMillis === "function"
+  ) {
+    return (sentAt as TimestampLike).toMillis();
+  }
+
+  return 0;
+}
+
 // Conversations have the form:
 // { id: string,
 //   participants: [string, string],
@@ -21,7 +49,7 @@ import {
 //   }
 // }
 
-async function getConversations(userId) {
+async function getConversations(userId: string) {
   if (!userId) {
     throw new Error("User id required to fetch conversations");
   }
@@ -34,42 +62,39 @@ async function getConversations(userId) {
 
   const conversationsSnapshot = await getDocs(conversationsQuery);
 
-  return (
-    conversationsSnapshot.docs
-      .map((conversationDoc) => ({
-        id: conversationDoc.id,
-        ...conversationDoc.data(),
-      }))
-      // Sorts according to these rules:
-      // 1) Unread messages come before all other messages
-      // 2) Within unread messages, timestamp dictates order
-      .sort((firstConversation, secondConversation) => {
-        const firstLastMessage = firstConversation.last_message ?? {};
-        const secondLastMessage = secondConversation.last_message ?? {};
+  const conversations = conversationsSnapshot.docs.map((conversationDoc) => ({
+    id: conversationDoc.id,
+    ...conversationDoc.data(),
+  })) as Conversation[];
 
-        const firstUnreadPriority =
-          firstLastMessage.read === false &&
-          firstLastMessage.sender_id !== userId;
-        const secondUnreadPriority =
-          secondLastMessage.read === false &&
-          secondLastMessage.sender_id !== userId;
+  return conversations.sort(
+    (firstConversation: Conversation, secondConversation: Conversation) => {
+      const firstLastMessage = firstConversation.last_message ?? {};
+      const secondLastMessage = secondConversation.last_message ?? {};
 
-        if (firstUnreadPriority !== secondUnreadPriority) {
-          return firstUnreadPriority ? -1 : 1;
-        }
+      const firstUnreadPriority =
+        firstLastMessage.read === false &&
+        firstLastMessage.sender_id !== userId;
+      const secondUnreadPriority =
+        secondLastMessage.read === false &&
+        secondLastMessage.sender_id !== userId;
 
-        const firstSentAt = firstLastMessage.sent_at?.toMillis?.() ?? 0;
-        const secondSentAt = secondLastMessage.sent_at?.toMillis?.() ?? 0;
+      if (firstUnreadPriority !== secondUnreadPriority) {
+        return firstUnreadPriority ? -1 : 1;
+      }
 
-        return secondSentAt - firstSentAt;
-      })
+      const firstSentAt = getSentAtMillis(firstLastMessage.sent_at);
+      const secondSentAt = getSentAtMillis(secondLastMessage.sent_at);
+
+      return secondSentAt - firstSentAt;
+    },
   );
 }
 
 async function createConversation(
-  senderId,
-  recipientId,
-  initialMessageContent,
+  senderId: string,
+  recipientId: string,
+  initialMessageContent: string,
 ) {
   if (!senderId || !recipientId) {
     throw new Error("Both participant ids are required");
@@ -100,7 +125,6 @@ async function createConversation(
 
   if (conversationAlreadyExists) {
     const error = new Error("Conversation already exists");
-    error.code = "CONVERSATION_ALREADY_EXISTS";
     throw error;
   }
 
