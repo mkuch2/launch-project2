@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import type { PublicUser } from "../types/index";
+import type { PublicUser } from "../../../types";
 import UserCard from "../components/UserCard";
 import "./styles/Discover.css";
 
@@ -31,7 +31,7 @@ export default function Discover() {
   }, []);
 
   const filteredUsers = users.filter((user) =>
-    user.displayName.toLowerCase().includes(searchQuery.toLowerCase())
+    user.displayName.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   return (
@@ -48,15 +48,15 @@ export default function Discover() {
       </div>
       <div className="discover__list">
         {isLoading && <p className="discover__status">Loading...</p>}
-        {error && <p className="discover__status discover__status--error">{error}</p>}
+        {error && (
+          <p className="discover__status discover__status--error">{error}</p>
+        )}
         {!isLoading && !error && filteredUsers.length === 0 && (
           <p className="discover__status">No users found.</p>
         )}
         {!isLoading &&
           !error &&
-          filteredUsers.map((user) => (
-            <UserCard key={user.id} user={user} />
-          ))}
+          filteredUsers.map((user) => <UserCard key={user.id} user={user} />)}
       </div>
     </div>
   );
