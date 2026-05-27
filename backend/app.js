@@ -24,9 +24,9 @@ app.use(express.json());
 app.use(attachUser);
 app.use("/spotify", spotifyRouter);
 app.use("/callback", callbackRouter);
-app.use("/conversations", conversationsRouter);
+app.use("/api/conversations", conversationsRouter);
 app.use("/api/users", usersRouter);
-app.use("/messages", messagesRouter);
+app.use("/api/messages", messagesRouter);
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
