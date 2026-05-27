@@ -33,6 +33,7 @@ router.get("/", async (req, res) => {
     });
   }
 });
+
 router.post("/", async (req, res) => {
   const senderId = req.user?.id ?? req.body.senderId;
   const { recipientId, initialMessage } = req.body;
