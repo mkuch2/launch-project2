@@ -3,7 +3,7 @@ import { getMessages, sendNewMessage } from "../db/messages.js";
 
 const router = express.Router();
 
-router.get("/:conversationId", async function (req, res) {
+router.get("/:conversationId", async function (req: express.Request, res: express.Response) {
   const conversationId = req.params.conversationId ?? null;
 
   if (!conversationId) {
@@ -19,7 +19,7 @@ router.get("/:conversationId", async function (req, res) {
   }
 });
 
-router.post("/:conversationId", async function (req, res) {
+router.post("/:conversationId", async function (req: express.Request, res: express.Response) {
   const conversationId = req.params.conversationId ?? null;
 
   const userId = req.user?.id;
