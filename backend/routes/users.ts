@@ -1,5 +1,6 @@
 import express from "express";
 import { createNewUser, getUserById } from "../db/users.js";
+import type { PrivateUser } from "../../types/index.js";
 const router = express.Router();
 
 // get api users
@@ -48,14 +49,14 @@ router.get("/:userId", async (req, res) => {
   }
 
   try {
-    const user = await getUserById(id);
+    const user: PrivateUser = (await getUserById(id)) as PrivateUser;
 
     if (!user) {
       return res.status(404).send({ error: "User not found" });
     }
 
     console.log("User is: ", user);
-    res.status(200).json({ id: id, ...user });
+    res.status(200).json(user);
   } catch (err) {
     res.status(500).json(err);
   }
@@ -68,8 +69,13 @@ router.post("/", async (req, res) => {
     const newUser = await createNewUser(userId, displayName);
     res.status(201).json(newUser);
   } catch (err) {
-    console.error("Error creating user:", err);
-    res.status(400).json({ error: err.message || "Failed to create user" });
+    if (err instanceof Error) {
+      console.error("Error creating user:", err);
+      return res
+        .status(500)
+        .json({ error: err.message || "Failed to create user" });
+    }
+    return res.status(500).send({ error: "Unknown error occured" });
   }
 });
 
