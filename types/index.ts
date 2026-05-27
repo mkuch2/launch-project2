@@ -1,3 +1,5 @@
+import { Timestamp, FieldValue } from "firebase/firestore";
+
 export interface PublicUser {
   id: string;
   displayName: string;
@@ -34,14 +36,14 @@ export interface Message {
   content: string;
   conversation_id: string;
   sender_id: string;
-  sent_at: string;
+  sent_at: Timestamp | FieldValue;
 }
 
 export interface Forum {
   id: string;
   author: PrivateUser;
   name: string;
-  createdAt: string;
+  createdAt: Timestamp | FieldValue;
 }
 
 export interface Post {
@@ -50,7 +52,7 @@ export interface Post {
   title: string;
   content: string;
   likes: Number;
-  createdAt: string;
+  createdAt: Timestamp | FieldValue;
   forumId: string;
 }
 

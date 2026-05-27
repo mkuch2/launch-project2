@@ -14,13 +14,14 @@ import {
 } from "firebase/firestore";
 
 import type { PrivateUser, Post } from "../../types/index.js";
+import { Timestamp, FieldValue } from "firebase/firestore";
 
 interface PostRecord {
   author: PrivateUser;
   title: string;
   content: string;
   likes: Number;
-  createdAt?: string;
+  createdAt?: Timestamp | FieldValue;
   forumId: string;
 }
 
