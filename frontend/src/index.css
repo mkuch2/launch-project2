@@ -49,3 +49,8 @@ code {
   padding: 4px 8px;
   background: var(--code-bg);
 }
+
+/* Tailwind base/utilities - requires installing tailwindcss and postcss */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
