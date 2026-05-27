@@ -1,37 +1,48 @@
-import { Link } from "react-router";
+import { NavLink } from "react-router";
+import { useContext } from "react";
+import { AuthContext } from "../AuthContext";
+
 import "./styles/NavBar.css";
 import SpotifyIcon from "../assets/spotify-icon.svg";
 
-const profileImageSrc = "";
-
 export default function NavBar() {
+  const { user } = useContext(AuthContext);
+
+  const profileImage = user?.images?.[0]?.url;
+  const displayName = user?.displayName || user?.username || "U";
+
   return (
     <div className="nav-bar">
-      <Link className="nav-icon" to="/">
-        <img src={SpotifyIcon} height={45} width={45} />
-      </Link>
+      <NavLink className="nav-brand" to="/">
+        <img src={SpotifyIcon} alt="Spotify logo" />
+        <span>Reverb</span>
+      </NavLink>
 
       <nav className="nav-links">
-        <Link to="/liked-songs">Liked Songs</Link>
-        <Link to="/top-artists">Top Artists</Link>
-        <Link to="/top-songs">Top Songs</Link>
-        <Link to="/discover">Discover</Link>
-        <Link to="/forum">Forum</Link>
-        <Link to="/inbox">Inbox</Link>
-        <Link className="profile-link" to="/profile">
-          {profileImageSrc ? (
+        <NavLink to="/" end>
+          Home
+        </NavLink>
+
+        <NavLink to="/liked-songs">Liked</NavLink>
+        <NavLink to="/top-artists">Top Artists</NavLink>
+        <NavLink to="/top-songs">Top Songs</NavLink>
+        <NavLink to="/discover">Discover</NavLink>
+        <NavLink to="/forum">Forum</NavLink>
+        <NavLink to="/inbox">Inbox</NavLink>
+
+        <NavLink className="profile-link" to="/profile">
+          {profileImage ? (
             <img
               className="profile-picture"
-              src={profileImageSrc}
-              alt="profile picture"
+              src={profileImage}
+              alt="profile"
             />
           ) : (
-            <span
-              className="profile-picture profile-picture--fallback"
-              aria-hidden="true"
-            />
+            <span className="profile-fallback">
+              {displayName.charAt(0).toUpperCase()}
+            </span>
           )}
-        </Link>
+        </NavLink>
       </nav>
     </div>
   );
