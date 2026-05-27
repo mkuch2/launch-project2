@@ -41,7 +41,7 @@ export default function LoginCallback() {
             `${import.meta.env.VITE_API_URL}/api/users`,
             {
               userId: profile.id,
-              username: profile.displayName,
+              displayName: profile.displayName,
             },
           );
 
