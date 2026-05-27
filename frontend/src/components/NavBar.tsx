@@ -1,37 +1,47 @@
-import { Link } from "react-router";
+import { NavLink } from "react-router";
+import { useContext } from "react";
+import { AuthContext } from "../AuthContext";
+
 import "./styles/NavBar.css";
 import SpotifyIcon from "../assets/spotify-icon.svg";
 
-const profileImageSrc = "";
-
 export default function NavBar() {
+  const { user } = useContext(AuthContext);
+
+  const profileImage = user?.profilePic;
+  const displayName = user?.displayName || user?.username || "U";
+
   return (
     <div className="nav-bar">
-      <Link className="nav-icon" to="/">
-        <img src={SpotifyIcon} height={45} width={45} />
-      </Link>
+      <NavLink className="nav-brand" to="/">
+        <img src={SpotifyIcon} alt="Spotify logo" />
+        <span>Reverb</span>
+      </NavLink>
 
       <nav className="nav-links">
-        <Link to="/liked-songs">Liked Songs</Link>
-        <Link to="/top-artists">Top Artists</Link>
-        <Link to="/top-songs">Top Songs</Link>
-        <Link to="/discover">Discover</Link>
-        <Link to="/forums">Forums</Link>
-        <Link to="/inbox">Inbox</Link>
-        <Link className="profile-link" to="/profile">
-          {profileImageSrc ? (
-            <img
-              className="profile-picture"
-              src={profileImageSrc}
-              alt="profile picture"
-            />
-          ) : (
-            <span
-              className="profile-picture profile-picture--fallback"
-              aria-hidden="true"
-            />
-          )}
-        </Link>
+        <NavLink to="/" end>Home</NavLink>
+        <NavLink to="/liked-songs">Liked</NavLink>
+        <NavLink to="/top-artists">Top Artists</NavLink>
+        <NavLink to="/top-songs">Top Songs</NavLink>
+        <NavLink to="/discover">Discover</NavLink>
+        <NavLink to="/forums">Forums</NavLink>
+        <NavLink to="/inbox">Inbox</NavLink>
+
+        {user ? (
+          <NavLink className="profile-link" to="/profile">
+            {profileImage ? (
+              <img className="profile-picture" src={profileImage} alt="profile" />
+            ) : (
+              <span className="profile-fallback">
+                {displayName.charAt(0).toUpperCase()}
+              </span>
+            )}
+          </NavLink>
+        ) : (
+          <NavLink className="login-button" to="/login">
+            Login
+          </NavLink>
+        )}
       </nav>
     </div>
   );
