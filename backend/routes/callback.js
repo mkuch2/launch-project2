@@ -54,7 +54,7 @@ router.get("/", async function (req, res) {
 
     console.log("Redirecting with cookie: ", tokenData.access_token);
 
-    res.redirect("http://127.0.0.1:5173/login");
+    res.redirect("http://127.0.0.1:5173/login-callback");
   } catch (err) {
     console.error("Error getting access token: ", err);
     return res.status(500).send();

@@ -5,6 +5,7 @@ import { router as spotifyRouter } from "./routes/spotify.js";
 import { router as callbackRouter } from "./routes/callback.js";
 import { router as conversationsRouter } from "./routes/conversations.js";
 import { router as usersRouter } from "./routes/users.js";
+import { attachUser } from "./middleware/attachUser.js";
 
 dotenv.config();
 
@@ -19,6 +20,7 @@ app.use(
 );
 
 app.use(express.json());
+app.use(attachUser);
 app.use("/spotify", spotifyRouter);
 app.use("/callback", callbackRouter);
 app.use("/conversations", conversationsRouter);

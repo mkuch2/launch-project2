@@ -15,8 +15,7 @@ const router = express.Router();
 //  }
 
 router.get("/", async (req, res) => {
-  //TODO: get user via middleware, not body const userId = req.user?.id;
-  const { userId } = req.body;
+  const userId = req.user?.id ?? req.body.userId;
 
   if (!userId) {
     return res.status(400).json({
@@ -35,8 +34,8 @@ router.get("/", async (req, res) => {
   }
 });
 router.post("/", async (req, res) => {
-  // TODO: get sender with auth middleware rather than body const senderId = req.user.id;
-  const { senderId, recipientId, initialMessage } = req.body;
+  const senderId = req.user?.id ?? req.body.senderId;
+  const { recipientId, initialMessage } = req.body;
 
   if (!senderId) {
     return res.status(400).json({
