@@ -45,13 +45,16 @@ router.get("/", async function (req, res) {
     const tokenData = await tokenResponse.json();
     console.log("Spotify token data is: ", tokenData);
 
-    res.cookie("spotify_access_token", tokenData.accessToken, {
+    res.cookie("spotify_access_token", tokenData.access_token, {
       httpOnly: true,
       secure: false,
+      sameSite: "lax",
       maxAge: 3600000,
     });
 
-    res.redirect("http://localhost:5173/");
+    console.log("Redirecting with cookie: ", tokenData.access_token);
+
+    res.redirect("http://127.0.0.1:5173/login-callback");
   } catch (err) {
     console.error("Error getting access token: ", err);
     return res.status(500).send();
