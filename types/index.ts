@@ -3,7 +3,6 @@ import { Timestamp, FieldValue } from "firebase/firestore";
 export interface PublicUser {
   id: string;
   displayName: string;
-  username?: string; // backend uses username
 
   //  Sourced From Firebase^   vSourced from Spotify
   profilePic: string; //url
@@ -18,8 +17,7 @@ export interface PublicUser {
 
 export interface PrivateUser {
   id: string;
-  username?: string;
-  displayName?: string;
+  displayName: string;
   profilePic?: string;
 }
 
@@ -64,7 +62,7 @@ export interface Artist {
   name: string;
   genres?: string[];
   images?: { url: string }[];
-};
+}
 export interface Song {
   id: string;
   name: string;
@@ -76,4 +74,4 @@ export interface Song {
       url: string;
     }[];
   };
-};
+}
