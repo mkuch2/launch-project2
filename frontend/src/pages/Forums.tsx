@@ -6,6 +6,7 @@ import { firebaseTimestampToString } from "../utilities/firebaseTimestampToStrin
 import "./styles/Forums.css";
 import { Link } from "react-router";
 import Loading from "../components/ui/Loading";
+import CreateForumForm from "../components/ui/CreateForumForm";
 
 export default function Forums() {
   const [forums, setForums] = useState<Forum[]>([]);
@@ -52,6 +53,7 @@ export default function Forums() {
           <span>No forums found</span>
         )}
       </div>
+      {/* <CreateForumForm /> */}
     </div>
   );
 }
