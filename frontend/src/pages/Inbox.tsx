@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { useNavigate } from "react-router";
 
 type Message = {
   id: string;
@@ -11,49 +12,50 @@ type Message = {
 const MOCK_MESSAGES: Message[] = [
   {
     id: "1",
-    senderName: "User Name",
-    senderInitials: "UN",
-    preview:
-      "Body text for whatever you'd like to say. Add main takeaway points, quotes, anecdotes, or even a very very short story.",
+    senderName: "Alex",
+    senderInitials: "A",
+    preview: "What's your favorite artist on Spotify?",
+    timestamp: "2 hours ago",
   },
   {
     id: "2",
-    senderName: "User Name",
-    senderInitials: "UN",
-    preview:
-      "Body text for whatever you'd like to say. Add main takeaway points, quotes, anecdotes, or even a very very short story.",
+    senderName: "Jordan",
+    senderInitials: "J",
+    preview: "I made a playlist just for you",
+    timestamp: "1 day ago",
   },
   {
     id: "3",
-    senderName: "User Name",
-    senderInitials: "UN",
-    preview:
-      "Body text for whatever you'd like to say. Add main takeaway points, quotes, anecdotes, or even a very very short story.",
+    senderName: "Sam",
+    senderInitials: "S",
+    preview: "Are you going to the concert?",
+    timestamp: "2 days ago",
   },
   {
     id: "4",
-    senderName: "User Name",
-    senderInitials: "UN",
-    preview:
-      "Body text for whatever you'd like to say. Add main takeaway points, quotes, anecdotes, or even a very very short story.",
+    senderName: "Morgan",
+    senderInitials: "M",
+    preview: "Check out this new artist I found",
+    timestamp: "3 days ago",
   },
 ];
 
 export default function Inbox(): JSX.Element {
   const [query, setQuery] = useState("");
+  const navigate = useNavigate();
 
   const messages = useMemo(() => {
     if (!query) return MOCK_MESSAGES;
-    return MOCK_MESSAGES.filter(
-      (m) =>
-        m.senderName.toLowerCase().includes(query.toLowerCase()) ||
-        m.preview.toLowerCase().includes(query.toLowerCase()),
+    return MOCK_MESSAGES.filter((m) =>
+      m.senderName.toLowerCase().includes(query.toLowerCase()),
     );
   }, [query]);
 
   const handleMessageClick = (messageId: string) => {
-    // TODO: Connect to backend - navigate to message detail or open message
-    console.log("Opening message:", messageId);
+    const message = MOCK_MESSAGES.find((m) => m.id === messageId);
+    if (message) {
+      navigate(`/message/${messageId}`, { state: { userName: message.senderName } });
+    }
   };
 
   return (
@@ -70,7 +72,7 @@ export default function Inbox(): JSX.Element {
             <input
               type="text"
               className="w-full rounded-full border border-gray-300 px-4 py-2 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent"
-              placeholder="Search messages..."
+              placeholder="Search username..."
               value={query}
               onChange={(e) => setQuery(e.target.value)}
             />
@@ -103,9 +105,6 @@ export default function Inbox(): JSX.Element {
                     <h3 className="font-semibold text-gray-900 text-sm">
                       {m.senderName}
                     </h3>
-                    {m.timestamp && (
-                      <span className="text-xs text-gray-500">{m.timestamp}</span>
-                    )}
                   </div>
                   <p className="text-gray-700 text-sm leading-relaxed line-clamp-2">
                     {m.preview}
