@@ -44,7 +44,7 @@ export default function TopArtists() {
     <main className="music-page">
       <section className="music-header">
         <h1 className="music-title">Top Artists</h1>
-        <p className="music-username">{user?.displayName || user?.username || "Username"}</p>
+        <p className="music-username">{user?.displayName || "Username"}</p>
       </section>
 
       <div className="filter-buttons">
