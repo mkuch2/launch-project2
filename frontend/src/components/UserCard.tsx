@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router";
-import type { PublicUser } from "../types/index";
+import type { PublicUser } from "../../../types";
 import "./styles/UserCard.css";
 
 // randomly generate avatar color for user profiles
@@ -39,11 +39,11 @@ export default function UserCard({ user }: UserCardProps) {
       <div className="user-card__header">
         <div
           className="user-card__avatar"
-          style={{ backgroundColor: getAvatarColor(user.displayName ?? user.username ?? "") }}
+          style={{ backgroundColor: getAvatarColor(user.displayName ?? "") }}
         >
-          {getInitials(user.displayName ?? user.username ?? "")}
+          {getInitials(user.displayName ??  "")}
         </div>
-        <span className="user-card__name">{user.displayName ?? user.username}</span>
+        <span className="user-card__name">{user.displayName}</span>
       </div>
 
       <div className="user-card__info">

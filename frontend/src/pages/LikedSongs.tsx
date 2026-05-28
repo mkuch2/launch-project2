@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import type { Song } from "../types/index";
+import type { Song } from "../../../types";
 import SongCard from "../components/SongCard";
 import "./styles/LikedSongs.css";
 

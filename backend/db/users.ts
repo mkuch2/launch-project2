@@ -3,7 +3,7 @@
 //   displayName: string
 // }
 
-import { doc, setDoc, getDoc } from "firebase/firestore";
+import { doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../firebase.js";
 
 async function getUserById(id: string) {
@@ -35,9 +35,11 @@ async function createNewUser(
   }
 
   const newUser = {
-    displayName,
-    profilePic: images?.[0]?.url || "",
-  };
+  displayName,
+  profilePic: images?.[0]?.url || "",
+  bio: "",
+  isPublic: true,
+};
 
   try {
     const userRef = doc(db, "users", id);
@@ -57,4 +59,32 @@ async function createNewUser(
   }
 }
 
-export { createNewUser, getUserById };
+async function updateUserById(id: string, updates: Partial<{
+  displayName: string;
+  profilePic: string;
+  bio: string;
+  isPublic: boolean;
+}>) {
+  if (!id) {
+    throw new Error("ID missing from updateUserById");
+  }
+
+  try {
+    const userRef = doc(db, "users", id);
+
+    await updateDoc(userRef, updates);
+
+    const snap = await getDoc(userRef);
+
+    if (!snap.exists()) {
+      return null;
+    }
+
+    return { id, ...snap.data() };
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    throw new Error(`Error updating user by id: ${message || err}`);
+  }
+}
+
+export { createNewUser, getUserById, updateUserById };
