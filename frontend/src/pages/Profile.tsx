@@ -12,7 +12,7 @@ type ProfileUser = PrivateUser & {
 };
 
 export default function Profile() {
-  const { user } = useContext(AuthContext);
+  const { user, logout } = useContext(AuthContext);
   const { userId } = useParams();
 
   const profileId = userId || user?.id;

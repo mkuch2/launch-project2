@@ -100,6 +100,37 @@ export default function Forum() {
     }
   };
 
+  const handleEditPost = async (
+    postId: string,
+    title: string,
+    content: string,
+  ) => {
+    try {
+      const response = await axios.patch(
+        `${import.meta.env.VITE_API_URL}/api/posts/${postId}`,
+        { title, content },
+      );
+
+      setPosts((prevPosts) =>
+        prevPosts.map((post) =>
+          post.id === postId ? { ...post, ...response.data } : post,
+        ),
+      );
+    } catch (err) {
+      console.error("Error editing post: ", err);
+    }
+  };
+
+  const handleDeletePost = async (postId: string) => {
+    try {
+      await axios.delete(`${import.meta.env.VITE_API_URL}/api/posts/${postId}`);
+
+      setPosts((prevPosts) => prevPosts.filter((post) => post.id !== postId));
+    } catch (err) {
+      console.error("Error deleting post: ", err);
+    }
+  };
+
   const handleLikePost = async (postId: string) => {
     if (!user) {
       return;
@@ -150,6 +181,7 @@ export default function Forum() {
         <div className="forum-post-list">
           {posts.map((p) => (
             <PostCard
+              key={p.id}
               postId={p.id}
               title={p.title}
               author={p.author}
@@ -157,7 +189,10 @@ export default function Forum() {
               createdAt={firebaseTimestampToString(p.createdAt, true)}
               likes={p.likes.toString()}
               likedByCurrentUser={p.likedByCurrentUser ?? false}
+              currentUserId={user?.id}
               onLike={handleLikePost}
+              onEdit={handleEditPost}
+              onDelete={handleDeletePost}
             />
           ))}
         </div>

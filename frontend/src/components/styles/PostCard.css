@@ -82,17 +82,29 @@
   margin-top: 0;
 }
 
-.post-card__like-button {
+.post-card__actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.post-card__action-button {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
   border: none;
   background: transparent;
   color: #777;
-  padding: 0;
+  padding: 0.25rem;
   font: inherit;
   cursor: pointer;
   transition: color 0.15s ease;
+  border-radius: 6px;
+}
+
+.post-card__action-button svg {
+  width: 1rem;
+  height: 1rem;
 }
 
 .post-card__like-button--liked {
@@ -100,16 +112,107 @@
 }
 
 .post-card__like-button svg {
-  width: 1rem;
-  height: 1rem;
   fill: currentColor;
 }
 
-.post-card__like-button:hover {
-  color: inherit;
+.post-card__action-button:hover {
+  color: #333;
+}
+
+.post-card__edit-button:hover {
+  color: #2563eb;
+}
+
+.post-card__delete-button:hover {
+  color: #dc2626;
 }
 
 .post-card__like-count {
   font-size: 0.92rem;
   font-weight: 600;
+}
+
+/* Inline edit form */
+.post-card__edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.post-card__edit-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #444;
+}
+
+.post-card__edit-input,
+.post-card__edit-textarea {
+  width: 100%;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 0.7rem 0.85rem;
+  font: inherit;
+  font-size: 0.95rem;
+  color: #222;
+  background: #fff;
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.post-card__edit-input:focus,
+.post-card__edit-textarea:focus {
+  border-color: #222;
+}
+
+.post-card__edit-textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.post-card__edit-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+.post-card__save-button,
+.post-card__cancel-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  border: none;
+  border-radius: 999px;
+  padding: 0.5rem 1rem;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    opacity 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.post-card__save-button {
+  background: #222;
+  color: #fff;
+}
+
+.post-card__save-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.post-card__save-button:not(:disabled):hover {
+  background: #111;
+}
+
+.post-card__cancel-button {
+  background: #fff;
+  color: #444;
+  border: 1px solid #ddd;
+}
+
+.post-card__cancel-button:hover {
+  background: #f5f5f5;
 }

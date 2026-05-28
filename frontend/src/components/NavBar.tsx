@@ -1,4 +1,4 @@
-import { NavLink } from "react-router";
+import { NavLink, Link } from "react-router";
 import { useContext } from "react";
 import { AuthContext } from "../AuthContext";
 
@@ -22,12 +22,16 @@ export default function NavBar() {
         <NavLink to="/" end>
           Home
         </NavLink>
-        <NavLink to="/liked-songs">Liked Songs</NavLink>
-        <NavLink to="/top-artists">Top Artists</NavLink>
-        <NavLink to="/top-songs">Top Songs</NavLink>
+        {user && (
+          <>
+            <NavLink to="/liked-songs">Liked Songs</NavLink>
+            <NavLink to="/top-artists">Top Artists</NavLink>
+            <NavLink to="/top-songs">Top Songs</NavLink>{" "}
+          </>
+        )}
         <NavLink to="/discover">Discover</NavLink>
         <NavLink to="/forums">Forums</NavLink>
-        <NavLink to="/inbox">Inbox</NavLink>
+        {user && <NavLink to="/inbox">Inbox</NavLink>}
 
         {user ? (
           <NavLink className="profile-link" to="/profile">
@@ -44,9 +48,12 @@ export default function NavBar() {
             )}
           </NavLink>
         ) : (
-          <NavLink className="login-button" to="/login">
+          <Link
+            className="login-button"
+            to={`${import.meta.env.VITE_API_URL}/spotify/login`}
+          >
             Login
-          </NavLink>
+          </Link>
         )}
       </nav>
     </div>
