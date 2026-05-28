@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext, useRef } from "react";
-import { useParams, useLocation } from "react-router";
+import { useParams, useLocation, useNavigate } from "react-router";
 import axios from "axios";
 import { AuthContext } from "../AuthContext";
 
@@ -14,6 +14,7 @@ type ChatMessage = {
 export default function Message(): JSX.Element {
   const { conversationId } = useParams();
   const location = useLocation();
+  const navigate = useNavigate();
   const { user } = useContext(AuthContext);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [messageInput, setMessageInput] = useState("");
@@ -21,10 +22,16 @@ export default function Message(): JSX.Element {
   const [sending, setSending] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
 
+  const isNew = conversationId === "new";
   const userName = (location.state as any)?.userName ?? "User";
+  const recipientId = (location.state as any)?.recipientId;
   const userInitials = userName[0]?.toUpperCase() ?? "?";
 
   useEffect(() => {
+    if (isNew) {
+      setLoading(false);
+      return;
+    }
     if (!conversationId) return;
 
     async function fetchMessages() {
@@ -41,23 +48,32 @@ export default function Message(): JSX.Element {
     }
 
     fetchMessages();
-  }, [conversationId]);
+  }, [conversationId, isNew]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
   const handleSendMessage = async () => {
-    if (!messageInput.trim() || !conversationId || sending) return;
+    if (!messageInput.trim() || sending) return;
 
     setSending(true);
     try {
-      const { data: newMessage } = await axios.post<ChatMessage>(
-        `${import.meta.env.VITE_API_URL}/api/messages/${conversationId}`,
-        { content: messageInput },
-      );
-      setMessages((prev) => [...prev, newMessage]);
-      setMessageInput("");
+      if (isNew) {
+        const { data: newConv } = await axios.post(
+          `${import.meta.env.VITE_API_URL}/api/conversations`,
+          { recipientId, initialMessage: messageInput },
+        );
+        setMessageInput("");
+        navigate(`/message/${newConv.id}`, { state: { userName }, replace: true });
+      } else {
+        const { data: newMessage } = await axios.post<ChatMessage>(
+          `${import.meta.env.VITE_API_URL}/api/messages/${conversationId}`,
+          { content: messageInput },
+        );
+        setMessages((prev) => [...prev, newMessage]);
+        setMessageInput("");
+      }
     } catch (err) {
       console.error("Error sending message:", err);
     } finally {

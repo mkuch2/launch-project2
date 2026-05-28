@@ -1,5 +1,5 @@
 import { useEffect, useState, useContext } from "react";
-import { useParams } from "react-router";
+import { useParams, useNavigate } from "react-router";
 import axios from "axios";
 import { AuthContext } from "../AuthContext";
 import type { PrivateUser, Song, Artist } from "../../../types";
@@ -18,11 +18,14 @@ export default function Profile() {
   const profileId = userId || user?.id;
   const isOwnProfile = !userId || userId === user?.id;
 
+  const navigate = useNavigate();
+
   const [profile, setProfile] = useState<ProfileUser | null>(null);
   const [isPublic, setIsPublic] = useState(true);
   const [showTopSongs, setShowTopSongs] = useState(false);
   const [showTopArtists, setShowTopArtists] = useState(false);
   const [showLikedSongs, setShowLikedSongs] = useState(false);
+  const [messagingLoading, setMessagingLoading] = useState(false);
 
   useEffect(() => {
     async function fetchProfile() {
@@ -68,6 +71,26 @@ export default function Profile() {
     }
   }
 
+  async function handleMessageClick() {
+    if (!profileId || !profile) return;
+    setMessagingLoading(true);
+    try {
+      const { data: conversations } = await axios.get(
+        `${import.meta.env.VITE_API_URL}/api/conversations`,
+      );
+      const existing = conversations.find((c: any) => c.otherUser?.id === profileId);
+      if (existing) {
+        navigate(`/message/${existing.id}`, { state: { userName: profile.displayName } });
+      } else {
+        navigate(`/message/new`, { state: { recipientId: profileId, userName: profile.displayName } });
+      }
+    } catch {
+      navigate(`/message/new`, { state: { recipientId: profileId, userName: profile.displayName } });
+    } finally {
+      setMessagingLoading(false);
+    }
+  }
+
   if (!profile) {
     return <div className="profile-page">Loading...</div>;
   }
@@ -94,6 +117,16 @@ export default function Profile() {
             <h1 className="profile-title">{profile.displayName}</h1>
             <p className="profile-username">@{profile.displayName}</p>
           </div>
+
+          {!isOwnProfile && (
+            <button
+              onClick={handleMessageClick}
+              disabled={messagingLoading}
+              className="profile-message-btn"
+            >
+              {messagingLoading ? "..." : "✉ Message"}
+            </button>
+          )}
         </div>
 
         {isOwnProfile && (
