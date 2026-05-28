@@ -28,7 +28,20 @@ export default function TopSongs() {
           },
         );
 
-        setSongs(response.data.items || response.data || []);
+       const fetchedSongs = response.data.items || response.data || [];
+
+        const songsToSave = fetchedSongs.slice(0, 10);
+
+        setSongs(fetchedSongs);
+
+        if (user?.id && timeRange === "long_term") {
+          await axios.patch(
+            `${import.meta.env.VITE_API_URL}/api/users/${user.id}`,
+            {
+              topSongAllTime: songsToSave,
+            },
+          );
+        }
       } catch (err) {
         console.error("Error fetching top songs:", err);
         setError("Could not load top songs.");

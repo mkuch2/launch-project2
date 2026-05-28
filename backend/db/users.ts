@@ -3,8 +3,9 @@
 //   displayName: string
 // }
 
-import { doc, setDoc, getDoc } from "firebase/firestore";
+import { doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../firebase.js";
+import type { Song, Artist } from "../../types";
 
 async function getUserById(id: string) {
   if (!id) {
@@ -35,9 +36,19 @@ async function createNewUser(
   }
 
   const newUser = {
-    displayName,
-    profilePic: images?.[0]?.url || "",
-  };
+  displayName,
+  profilePic: images?.[0]?.url || "",
+
+  isPublic: true,
+  showTopSongs: false,
+  showTopArtists: false,
+  showLikedSongs: false,
+
+  topSongAllTime: [],
+  topArtistAllTime: [],
+  likedSongs: [],
+  likedSongsCount: 0,
+};
 
   try {
     const userRef = doc(db, "users", id);
@@ -57,4 +68,39 @@ async function createNewUser(
   }
 }
 
-export { createNewUser, getUserById };
+async function updateUserById(id: string, updates: Partial<{
+  displayName: string;
+  profilePic: string;
+  bio: string;
+  isPublic: boolean;
+  showTopSongs: boolean;
+  showTopArtists: boolean;
+  showLikedSongs: boolean;
+  topSongAllTime: Song[];
+  topArtistAllTime: Artist[];
+  likedSongs: Song[];
+  likedSongsCount: number;
+}>) {
+  if (!id) {
+    throw new Error("ID missing from updateUserById");
+  }
+
+  try {
+    const userRef = doc(db, "users", id);
+
+    await updateDoc(userRef, updates);
+
+    const snap = await getDoc(userRef);
+
+    if (!snap.exists()) {
+      return null;
+    }
+
+    return { id, ...snap.data() };
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    throw new Error(`Error updating user by id: ${message || err}`);
+  }
+}
+
+export { createNewUser, getUserById, updateUserById };
