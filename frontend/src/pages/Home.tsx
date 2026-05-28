@@ -2,34 +2,59 @@ import { Link } from "react-router";
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../AuthContext";
 import axios from "axios";
-import type { PublicUser, Song, Artist } from "../../../types";
+import type { PublicUser } from "../../../types";
+
+type ForumPreview = {
+  id: string;
+  name?: string;
+  title?: string;
+  description?: string;
+};
 
 function Home() {
   const { user } = useContext(AuthContext) as { user: PublicUser | null };
 
   const [publicUser, setPublicUser] = useState<PublicUser | null>(null);
+  const [forums, setForums] = useState<ForumPreview[]>([]);
+  const [users, setUsers] = useState<PublicUser[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    async function getFullUser() {
+    async function getHomeData() {
       if (!user?.id) return;
 
       try {
         setLoading(true);
 
-        const response = await axios.get<PublicUser>(
-          `${import.meta.env.VITE_API_URL}/api/users/${user.id}`
+        const [userResponse, forumsResponse, usersResponse] =
+          await Promise.all([
+            axios.get<PublicUser>(
+              `${import.meta.env.VITE_API_URL}/api/users/${user.id}`
+            ),
+            axios.get<ForumPreview[]>(
+              `${import.meta.env.VITE_API_URL}/api/forums`
+            ),
+            axios.get<PublicUser[]>(
+              `${import.meta.env.VITE_API_URL}/api/users`
+            ),
+          ]);
+
+        setPublicUser(userResponse.data);
+        setForums(forumsResponse.data || []);
+
+        const publicUsers = (usersResponse.data || []).filter(
+          (person) => person.isPublic && person.id !== user.id
         );
 
-        setPublicUser(response.data);
+        setUsers(publicUsers);
       } catch (err) {
-        console.error("Could not load full user:", err);
+        console.error("Could not load home data:", err);
       } finally {
         setLoading(false);
       }
     }
 
-    getFullUser();
+    getHomeData();
   }, [user?.id]);
 
   if (!user) {
@@ -42,8 +67,8 @@ function Home() {
             <h1>Music sounds better together.</h1>
 
             <p className="home-subtitle">
-              Reverb connects Spotify listeners through profiles,
-              forums, discovery, and messaging.
+              Reverb connects Spotify listeners through profiles, forums,
+              discovery, and messaging.
             </p>
 
             <div className="home-actions">
@@ -59,9 +84,6 @@ function Home() {
 
   const fullUser = publicUser || user;
 
-  const topSongs: Song[] = fullUser.topSongAllTime || [];
-  const topArtists: Artist[] = fullUser.topArtistAllTime || [];
-
   return (
     <main className="home-page">
       <section className="dashboard-hero">
@@ -70,8 +92,12 @@ function Home() {
 
           <h1>Welcome back, {fullUser.displayName}</h1>
 
-          <div className="home-actions">
+          <p className="home-subtitle">
+            See what people are talking about and discover listeners with public
+            profiles.
+          </p>
 
+          <div className="home-actions">
             <Link to="/discover" className="primary-button">
               Discover Users
             </Link>
@@ -80,10 +106,9 @@ function Home() {
               Forums
             </Link>
 
-            <Link to="/inbox" className="primary-button">
+            <Link to="/inbox" className="secondary-button">
               Inbox
             </Link>
-
           </div>
         </div>
       </section>
@@ -93,35 +118,32 @@ function Home() {
       <section className="content-section">
         <div className="section-header">
           <div>
-            <p className="home-kicker">YOUR MUSIC</p>
-            <h2>Top Songs</h2>
+            <p className="home-kicker">COMMUNITY</p>
+            <h2>Active Forums</h2>
           </div>
 
-          <Link to="/top-songs" className="small-link">
+          <Link to="/forum" className="small-link">
             View all
           </Link>
         </div>
 
-        {topSongs.length > 0 ? (
-          <div className="media-grid">
-            {topSongs.slice(0, 5).map((song) => (
-              <Link to="/top-songs" className="media-card" key={song.id}>
-                {song.album?.images?.[0]?.url && (
-                  <img src={song.album.images[0].url} alt={song.name} />
-                )}
+        {forums.length > 0 ? (
+          <div className="text-card-grid">
+            {forums.slice(0, 3).map((forum) => (
+              <Link
+                to={`/forum/${forum.id}`}
+                className="text-card"
+                key={forum.id}
+              >
+                <h3>{forum.name || forum.title || "Forum"}</h3>
 
-                <h3>{song.name}</h3>
-
-                <p>
-                  {song.artists?.map((artist) => artist.name).join(", ") ||
-                    "Unknown Artist"}
-                </p>
+                <p>{forum.description || "Join the discussion."}</p>
               </Link>
             ))}
           </div>
         ) : (
           <div className="empty-state">
-            No top songs saved yet. Visit Top Songs to load your Spotify data.
+            No active forums yet. Visit Forums to start one.
           </div>
         )}
       </section>
@@ -129,33 +151,41 @@ function Home() {
       <section className="content-section">
         <div className="section-header">
           <div>
-            <p className="home-kicker">YOUR ARTISTS</p>
-            <h2>Top Artists</h2>
+            <p className="home-kicker">DISCOVER</p>
+            <h2>People to Discover</h2>
           </div>
 
-          <Link to="/top-artists" className="small-link">
+          <Link to="/discover" className="small-link">
             View all
           </Link>
         </div>
 
-        {topArtists.length > 0 ? (
-          <div className="media-grid">
-            {topArtists.slice(0, 5).map((artist) => (
-              <Link to="/top-artists" className="media-card" key={artist.id}>
-                {artist.images?.[0]?.url && (
-                  <img src={artist.images[0].url} alt={artist.name} />
-                )}
+        {users.length > 0 ? (
+          <div className="people-grid">
+            {users.slice(0, 4).map((person) => (
+              <Link
+              to={`/profile/${person.id}`}
+              className="person-card"
+              key={person.id}
+            >
+              {person.profilePic ? (
+                <img src={person.profilePic} alt={person.displayName} />
+              ) : (
+                <div className="person-avatar">
+                  {person.displayName?.charAt(0).toUpperCase() || "R"}
+                </div>
+              )}
 
-                <h3>{artist.name}</h3>
-
-                <p>{artist.genres?.slice(0, 2).join(", ") || "Artist"}</p>
-              </Link>
+              <div className="person-card-content">
+                <h3>{person.displayName}</h3>
+                <p>View profile.</p>
+              </div>
+            </Link>
             ))}
           </div>
         ) : (
           <div className="empty-state">
-            No top artists saved yet. Visit Top Artists to load your Spotify
-            data.
+            No public users found yet. Check Discover later.
           </div>
         )}
       </section>
