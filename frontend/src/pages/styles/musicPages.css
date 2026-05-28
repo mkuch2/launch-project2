@@ -24,12 +24,22 @@
 }
 
 .filter-buttons button {
-  padding: 0.65rem 1rem;
+  padding: 9px 13px;
   border: none;
-  border-radius: 999px;
-  background-color: #222;
-  color: white;
+  border-radius: 9px;
+  background-color: transparent;
+  color: #2c2c2c;
+  font-size: 18px;
   cursor: pointer;
+}
+
+.filter-buttons button:hover {
+  background-color: #eaeaea;
+}
+
+.filter-buttons button.active {
+  background-color: #000;
+  color: #fff;
 }
 
 .music-grid {
