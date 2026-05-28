@@ -1,6 +1,8 @@
 import express from "express";
 import { db } from "../firebase.js";
+import { getUserById, createNewUser } from "../db/users.js";
 import { collection, getDocs, query, where } from "firebase/firestore";
+import type { PrivateUser } from "../../types";
 
 const router = express.Router();
 
@@ -48,11 +50,7 @@ router.post("/", async (req, res) => {
   const { userId, displayName, images } = req.body;
 
   try {
-    const newUser = await createNewUser(
-      userId,
-      displayName,
-      images,
-    );
+    const newUser = await createNewUser(userId, displayName, images);
 
     res.status(201).json(newUser);
   } catch (err) {
