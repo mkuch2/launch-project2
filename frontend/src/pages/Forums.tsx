@@ -15,6 +15,7 @@ import { Pencil, Trash2 } from "lucide-react";
 export default function Forums() {
   const { user } = useContext(AuthContext);
   const [forums, setForums] = useState<Forum[]>([]);
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [creatingForum, setCreatingForum] = useState(false);
   const [editingForum, setEditingForum] = useState(false);
@@ -41,6 +42,10 @@ export default function Forums() {
     fetchForums();
   }, []);
 
+  const filteredForums = forums.filter((forum) =>
+    forum.name.toLowerCase().includes(searchQuery.toLowerCase()),
+  );
+
   const handleCreateForum = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -51,7 +56,11 @@ export default function Forums() {
     const newForumTempId = `new-${Date.now()}`;
     const newForumTemp: Forum = {
       id: newForumTempId,
-      author: { id: user.id, displayName: user.displayName },
+      author: {
+        id: user.id,
+        displayName: user.displayName,
+        profilePic: user.profilePic ?? "",
+      },
       name: forumName.trim(),
       createdAt: Timestamp.now(),
     };
@@ -64,7 +73,11 @@ export default function Forums() {
       const response = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/forums`,
         {
-          author: { id: user.id, displayName: user.displayName },
+          author: {
+            id: user.id,
+            displayName: user.displayName,
+            profilePic: user.profilePic ?? "",
+          },
           name: newForumTemp.name,
         },
       );
@@ -124,10 +137,20 @@ export default function Forums() {
 
   return (
     <div className="forum-page">
-      <h1>Forums</h1>
+      <div className="discover__header">
+        <h1>Forums</h1>
+        <input
+          className="discover__search"
+          type="text"
+          placeholder="Browse forums..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+      </div>
+
       <div className="forums-list-container">
-        {forums.length > 0 ? (
-          forums.map((f) => (
+        {filteredForums.length > 0 ? (
+          filteredForums.map((f) => (
             <div key={f.id} className="forum-preview-container">
               <Link to={`/forum/${f.id}`}>
                 <ForumCard
@@ -185,7 +208,7 @@ export default function Forums() {
             </div>
           ))
         ) : (
-          <span>No forums found</span>
+          <span className="discover__status">No forums found</span>
         )}
       </div>
 

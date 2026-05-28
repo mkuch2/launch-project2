@@ -1,6 +1,5 @@
 import { db } from "../firebase.js";
 import {
-  addDoc,
   collection,
   deleteDoc,
   doc,
@@ -8,6 +7,8 @@ import {
   getDocs,
   orderBy,
   query,
+  increment,
+  writeBatch,
   updateDoc,
   serverTimestamp,
   where,
@@ -20,15 +21,19 @@ interface PostRecord {
   author: PrivateUser;
   title: string;
   content: string;
+  forumId: string;
+}
+
+interface LikesRecord {
   likes: number;
   createdAt?: Timestamp | FieldValue;
-  forumId: string;
 }
 
 interface PostFilters {
   forumId?: string;
   conversationId?: string;
   userId?: string;
+  viewerId?: string;
 }
 
 function buildPostQuery(filters: PostFilters = {}) {
@@ -51,10 +56,28 @@ async function getPosts(filters: PostFilters = {}) {
   const postsQuery = buildPostQuery(filters);
   const postsSnapshot = await getDocs(postsQuery);
 
-  return postsSnapshot.docs.map((postDoc) => ({
-    id: postDoc.id,
-    ...postDoc.data(),
-  })) as Post[];
+  const postsWithLikes = await Promise.all(
+    postsSnapshot.docs.map(async (postDoc) => {
+      const likesRef = doc(postDoc.ref, "likes", "metadata");
+      const likesSnap = await getDoc(likesRef);
+      const likesData = likesSnap.data() as LikesRecord | undefined;
+      const likedByCurrentUser = filters.viewerId
+        ? (await getDoc(doc(postDoc.ref, "likes", filters.viewerId))).exists()
+        : false;
+      const postData = postDoc.data() as Omit<Post, "id" | "likes"> & {
+        likes?: number;
+      };
+
+      return {
+        id: postDoc.id,
+        ...postData,
+        likes: likesData?.likes ?? postData.likes ?? 0,
+        likedByCurrentUser,
+      } as Post;
+    }),
+  );
+
+  return postsWithLikes;
 }
 
 async function createPost(
@@ -71,18 +94,32 @@ async function createPost(
     author,
     title,
     content,
-    likes: 0,
     forumId,
   };
 
-  const docRef = await addDoc(collection(db, "posts"), {
+  const postRef = doc(collection(db, "posts"));
+  const likesRef = doc(collection(postRef, "likes"), "metadata");
+  const batch = writeBatch(db);
+
+  batch.set(postRef, {
     ...postData,
     createdAt: serverTimestamp(),
   });
-  const docSnap = await getDoc(docRef);
-  const docData = docSnap.data() as PostRecord;
+  batch.set(likesRef, {
+    likes: 0,
+    createdAt: serverTimestamp(),
+  });
 
-  return { id: docRef.id, ...docData } as Post;
+  await batch.commit();
+
+  const docSnap = await getDoc(postRef);
+  const likesSnap = await getDoc(likesRef);
+  const docData = docSnap.data() as Omit<Post, "id" | "likes"> & {
+    createdAt?: Timestamp | FieldValue;
+  };
+  const likesData = likesSnap.data() as LikesRecord | undefined;
+
+  return { id: postRef.id, ...docData, likes: likesData?.likes ?? 0 } as Post;
 }
 
 async function editPost(
@@ -91,6 +128,7 @@ async function editPost(
     title?: string;
     content?: string;
     forumId?: string;
+    likes?: number;
   },
 ) {
   if (!postId) {
@@ -98,10 +136,86 @@ async function editPost(
   }
 
   const postRef = doc(db, "posts", postId);
-  await updateDoc(postRef, updates);
-  const snap = await getDoc(postRef);
+  const likesRef = doc(postRef, "likes", "metadata");
+  const { likes, ...postUpdates } = updates;
 
-  return { id: postId, ...snap.data() } as Post;
+  if (Object.keys(postUpdates).length > 0) {
+    await updateDoc(postRef, postUpdates);
+  }
+
+  if (likes !== undefined) {
+    await updateDoc(likesRef, { likes });
+  }
+
+  const [snap, likesSnap] = await Promise.all([
+    getDoc(postRef),
+    getDoc(likesRef),
+  ]);
+  const snapData = snap.data() as Omit<Post, "id" | "likes">;
+  const likesData = likesSnap.data() as LikesRecord | undefined;
+
+  return {
+    id: postId,
+    ...snapData,
+    likes: likesData?.likes ?? likes ?? 0,
+  } as Post;
+}
+
+async function likePost(postId: string, user: PrivateUser) {
+  if (!postId) {
+    throw new Error("postId is required");
+  }
+
+  if (!user?.id) {
+    throw new Error("user is required to like a post");
+  }
+
+  const postRef = doc(db, "posts", postId);
+  const likesRef = doc(postRef, "likes", "metadata");
+  const userLikeRef = doc(collection(postRef, "likes"), user.id);
+  const existingLikeSnap = await getDoc(userLikeRef);
+  const isLikedAfterToggle = !existingLikeSnap.exists();
+
+  const batch = writeBatch(db);
+
+  if (existingLikeSnap.exists()) {
+    batch.delete(userLikeRef);
+    batch.set(
+      likesRef,
+      {
+        likes: increment(-1),
+      },
+      { merge: true },
+    );
+  } else {
+    batch.set(userLikeRef, {
+      createdAt: serverTimestamp(),
+      user,
+    });
+    batch.set(
+      likesRef,
+      {
+        likes: increment(1),
+      },
+      { merge: true },
+    );
+  }
+
+  await batch.commit();
+
+  const [postSnap, likesSnap] = await Promise.all([
+    getDoc(postRef),
+    getDoc(likesRef),
+  ]);
+  const postData = postSnap.data() as Omit<Post, "id" | "likes">;
+  const likesData = likesSnap.data() as LikesRecord | undefined;
+
+  return {
+    id: postId,
+    ...postData,
+    likes: likesData?.likes ?? 0,
+    likedByCurrentUser: isLikedAfterToggle,
+  } as Post;
 }
 
 async function deletePost(postId: string) {
@@ -109,8 +223,18 @@ async function deletePost(postId: string) {
     throw new Error("postId is required");
   }
 
-  await deleteDoc(doc(db, "posts", postId));
+  const postRef = doc(db, "posts", postId);
+  const likesSnapshot = await getDocs(collection(postRef, "likes"));
+  const batch = writeBatch(db);
+
+  likesSnapshot.docs.forEach((likeDoc) => {
+    batch.delete(likeDoc.ref);
+  });
+
+  batch.delete(postRef);
+  await batch.commit();
+
   return { id: postId };
 }
 
-export { createPost, deletePost, editPost, getPosts };
+export { createPost, deletePost, editPost, getPosts, likePost };

@@ -10,8 +10,10 @@ import {
   query,
   orderBy,
   serverTimestamp,
+  where,
 } from "firebase/firestore";
 import type { Forum, PrivateUser } from "../../types";
+import { deletePost } from "./posts.js";
 // Forum {
 //   id: string,
 //   author: {
@@ -55,6 +57,7 @@ async function getForums() {
 
 async function createForum(author: PrivateUser, name: string) {
   if (!author || !name) throw new Error("author and name are required");
+
   const forumData = { author, name };
   const docRef = await addDoc(collection(db, "forums"), {
     ...forumData,
@@ -80,6 +83,17 @@ async function editForum(
 
 async function deleteForum(forumId: string) {
   if (!forumId) throw new Error("forumId is required");
+
+  const forumPostsQuery = query(
+    collection(db, "posts"),
+    where("forumId", "==", forumId),
+  );
+  const forumPostsSnapshot = await getDocs(forumPostsQuery);
+
+  await Promise.all(
+    forumPostsSnapshot.docs.map((postDoc) => deletePost(postDoc.id)),
+  );
+
   await deleteDoc(doc(db, "forums", forumId));
   return { id: forumId };
 }
