@@ -5,10 +5,12 @@ import type { PrivateUser } from "../../../types";
 import "./styles/Profile.css";
 
 export default function Profile() {
- const { user } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
 
   const [profile, setProfile] = useState<PrivateUser | null>(null);
   const [isPublic, setIsPublic] = useState(true);
+  const [showTopSongs, setShowTopSongs] = useState(false);
+  const [showTopArtists, setShowTopArtists] = useState(false);
   const [showLikedSongs, setShowLikedSongs] = useState(false);
 
   useEffect(() => {
@@ -22,6 +24,8 @@ export default function Profile() {
 
         setProfile(response.data);
         setIsPublic(response.data.isPublic ?? true);
+        setShowTopSongs(response.data.showTopSongs ?? false);
+        setShowTopArtists(response.data.showTopArtists ?? false);
         setShowLikedSongs(response.data.showLikedSongs ?? false);
       } catch (err) {
         console.error("Error fetching profile:", err);
@@ -66,6 +70,34 @@ export default function Profile() {
           <button
             className={isPublic ? "toggle toggle-on" : "toggle"}
             onClick={() => setIsPublic(!isPublic)}
+          >
+            <span></span>
+          </button>
+        </div>
+
+        <div className="profile-toggle-row">
+          <div>
+            <h2>Show Top Songs</h2>
+            <p>{showTopSongs ? "Visible on profile" : "Hidden from profile"}</p>
+          </div>
+
+          <button
+            className={showTopSongs ? "toggle toggle-on" : "toggle"}
+            onClick={() => setShowTopSongs(!showTopSongs)}
+          >
+            <span></span>
+          </button>
+        </div>
+
+        <div className="profile-toggle-row">
+          <div>
+            <h2>Show Top Artists</h2>
+            <p>{showTopArtists ? "Visible on profile" : "Hidden from profile"}</p>
+          </div>
+
+          <button
+            className={showTopArtists ? "toggle toggle-on" : "toggle"}
+            onClick={() => setShowTopArtists(!showTopArtists)}
           >
             <span></span>
           </button>

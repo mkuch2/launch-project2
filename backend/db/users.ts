@@ -39,6 +39,9 @@ async function createNewUser(
   profilePic: images?.[0]?.url || "",
   bio: "",
   isPublic: true,
+  showTopSongs: false,
+  showTopArtists: false,
+  showLikedSongs: false
 };
 
   try {
@@ -64,6 +67,9 @@ async function updateUserById(id: string, updates: Partial<{
   profilePic: string;
   bio: string;
   isPublic: boolean;
+  showTopSongs: boolean;
+  showTopArtists: boolean;
+  showLikedSongs: boolean;
 }>) {
   if (!id) {
     throw new Error("ID missing from updateUserById");
