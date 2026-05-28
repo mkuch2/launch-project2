@@ -32,9 +32,9 @@ export default function LoginCallback() {
           const userResponse = await axios.get<PrivateUser>(
             `${import.meta.env.VITE_API_URL}/api/users/${profile.id}`,
           );
-          account = userResponse.data;
+          account = userResponse.data as PrivateUser;
         } catch (error: any) {
-          if (error?.response?.status !== 404) {
+          if (axios.isAxiosError(error) &&error?.response?.status !== 404) {
             throw error;
           }
 
@@ -52,8 +52,8 @@ export default function LoginCallback() {
 
         login(account);
         navigate("/");
-      } catch (error: any) {
-        if (error?.response?.status !== 400) {
+      } catch (error : any) {
+        if (axios.isAxiosError(error) && error?.response?.status === 400) {
           console.error("Error bootstrapping login:", error);
         }
       }

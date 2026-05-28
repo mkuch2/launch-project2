@@ -20,7 +20,7 @@ interface PostRecord {
   author: PrivateUser;
   title: string;
   content: string;
-  likes: Number;
+  likes: number;
   createdAt?: Timestamp | FieldValue;
   forumId: string;
 }
