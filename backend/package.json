@@ -4,7 +4,8 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "start": "tsx app.js"
+    "start": "tsx app.js",
+    "lint": "eslint ."
   },
   "keywords": [],
   "author": "",
