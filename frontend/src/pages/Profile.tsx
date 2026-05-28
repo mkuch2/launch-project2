@@ -35,6 +35,28 @@ export default function Profile() {
     fetchProfile();
   }, [user]);
 
+  async function updateProfile(
+    updates: Partial<{
+      isPublic: boolean;
+      showTopSongs: boolean;
+      showTopArtists: boolean;
+      showLikedSongs: boolean;
+    }>,
+  ) {
+    if (!user?.id) return;
+
+    try {
+      const response = await axios.patch(
+        `${import.meta.env.VITE_API_URL}/api/users/${user.id}`,
+        updates,
+      );
+
+      setProfile(response.data);
+    } catch (err) {
+      console.error("Error updating profile:", err);
+    }
+  }
+
   if (!profile) {
     return <div className="profile-page">Loading...</div>;
   }
@@ -69,7 +91,11 @@ export default function Profile() {
 
           <button
             className={isPublic ? "toggle toggle-on" : "toggle"}
-            onClick={() => setIsPublic(!isPublic)}
+            onClick={() => {
+              const newValue = !isPublic;
+              setIsPublic(newValue);
+              updateProfile({ isPublic: newValue });
+            }}
           >
             <span></span>
           </button>
@@ -83,7 +109,11 @@ export default function Profile() {
 
           <button
             className={showTopSongs ? "toggle toggle-on" : "toggle"}
-            onClick={() => setShowTopSongs(!showTopSongs)}
+            onClick={() => {
+              const newValue = !showTopSongs;
+              setShowTopSongs(newValue);
+              updateProfile({ showTopSongs: newValue });
+            }}
           >
             <span></span>
           </button>
@@ -97,7 +127,11 @@ export default function Profile() {
 
           <button
             className={showTopArtists ? "toggle toggle-on" : "toggle"}
-            onClick={() => setShowTopArtists(!showTopArtists)}
+            onClick={() => {
+              const newValue = !showTopArtists;
+              setShowTopArtists(newValue);
+              updateProfile({ showTopArtists: newValue });
+            }}
           >
             <span></span>
           </button>
@@ -111,7 +145,11 @@ export default function Profile() {
 
           <button
             className={showLikedSongs ? "toggle toggle-on" : "toggle"}
-            onClick={() => setShowLikedSongs(!showLikedSongs)}
+            onClick={() => {
+              const newValue = !showLikedSongs;
+              setShowLikedSongs(newValue);
+              updateProfile({ showLikedSongs: newValue });
+            }}
           >
             <span></span>
           </button>
