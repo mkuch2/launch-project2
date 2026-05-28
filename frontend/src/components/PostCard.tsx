@@ -3,19 +3,25 @@ import "./styles/PostCard.css";
 import { Heart } from "lucide-react";
 
 export interface PostCardProps {
+  postId: string;
   title: string;
   author: PrivateUser;
   content: string;
   createdAt: string;
   likes: string;
+  likedByCurrentUser: boolean;
+  onLike: (postId: string) => Promise<void>;
 }
 
 export default function PostCard({
+  postId,
   title,
   author,
   content,
   createdAt,
   likes,
+  likedByCurrentUser,
+  onLike,
 }: PostCardProps) {
   const profileImage = author.profilePic;
   const initials = author.displayName
@@ -55,7 +61,11 @@ export default function PostCard({
       </section>
 
       <footer className="post-card__footer">
-        <button className="post-card__like-button" type="button">
+        <button
+          className={`post-card__like-button${likedByCurrentUser ? " post-card__like-button--liked" : ""}`}
+          type="button"
+          onClick={() => onLike(postId)}
+        >
           <Heart />
           <span className="post-card__like-count">{likes}</span>
         </button>
