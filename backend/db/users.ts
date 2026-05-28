@@ -5,6 +5,7 @@
 
 import { doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../firebase.js";
+import type { Song, Artist } from "../../types";
 
 async function getUserById(id: string) {
   if (!id) {
@@ -37,11 +38,16 @@ async function createNewUser(
   const newUser = {
   displayName,
   profilePic: images?.[0]?.url || "",
-  bio: "",
+
   isPublic: true,
   showTopSongs: false,
   showTopArtists: false,
-  showLikedSongs: false
+  showLikedSongs: false,
+
+  topSongAllTime: [],
+  topArtistAllTime: [],
+  likedSongs: [],
+  likedSongsCount: 0,
 };
 
   try {
@@ -70,6 +76,10 @@ async function updateUserById(id: string, updates: Partial<{
   showTopSongs: boolean;
   showTopArtists: boolean;
   showLikedSongs: boolean;
+  topSongAllTime: Song[];
+  topArtistAllTime: Artist[];
+  likedSongs: Song[];
+  likedSongsCount: number;
 }>) {
   if (!id) {
     throw new Error("ID missing from updateUserById");

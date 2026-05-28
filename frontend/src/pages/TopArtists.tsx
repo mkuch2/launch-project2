@@ -28,7 +28,18 @@ export default function TopArtists() {
           },
         );
 
-        setArtists(response.data.items || response.data || []);
+        const fetchedArtists = response.data.items || response.data || [];
+
+        setArtists(fetchedArtists);
+
+        if (user?.id && timeRange === "long_term") {
+          await axios.patch(
+            `${import.meta.env.VITE_API_URL}/api/users/${user.id}`,
+            {
+              topArtistAllTime: fetchedArtists,
+            },
+          );
+        }
       } catch (err) {
         console.error("Error fetching top artists:", err);
         setError("Could not load top artists.");
