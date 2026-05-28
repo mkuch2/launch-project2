@@ -79,11 +79,7 @@ const router = createBrowserRouter([
             element: <Inbox />,
           },
           {
-            path: "message",
-            element: <Message />,
-          },
-          {
-            path: "message/:userId",
+            path: "message/:conversationId",
             element: <Message />,
           },
         ],

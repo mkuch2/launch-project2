@@ -103,4 +103,14 @@ async function updateUserById(id: string, updates: Partial<{
   }
 }
 
-export { createNewUser, getUserById, updateUserById };
+async function getUsersByIds(ids: string[]): Promise<Record<string, { id: string; displayName: string; profilePic?: string }>> {
+  if (!ids?.length) return {};
+  const snaps = await Promise.all(ids.map((id) => getDoc(doc(db, "users", id))));
+  const result: Record<string, { id: string; displayName: string; profilePic?: string }> = {};
+  snaps.forEach((snap, i) => {
+    if (snap.exists()) result[ids[i]] = { id: ids[i], ...(snap.data() as any) };
+  });
+  return result;
+}
+
+export { createNewUser, getUserById, updateUserById, getUsersByIds };

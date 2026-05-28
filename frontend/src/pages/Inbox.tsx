@@ -1,67 +1,58 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router";
+import axios from "axios";
+import { AuthContext } from "../AuthContext";
 
-type Message = {
+type Conversation = {
   id: string;
-  senderName: string;
-  senderInitials?: string;
-  preview: string;
-  timestamp?: string;
+  participants: string[];
+  last_message?: {
+    content: string;
+    read: boolean;
+    sender_id: string;
+    sent_at: any;
+  };
+  otherUser: {
+    id: string;
+    displayName: string;
+    profilePic?: string;
+  };
 };
-
-const MOCK_MESSAGES: Message[] = [
-  {
-    id: "1",
-    senderName: "Alex",
-    senderInitials: "A",
-    preview: "What's your favorite artist on Spotify?",
-    timestamp: "2 hours ago",
-  },
-  {
-    id: "2",
-    senderName: "Jordan",
-    senderInitials: "J",
-    preview: "I made a playlist just for you",
-    timestamp: "1 day ago",
-  },
-  {
-    id: "3",
-    senderName: "Sam",
-    senderInitials: "S",
-    preview: "Are you going to the concert?",
-    timestamp: "2 days ago",
-  },
-  {
-    id: "4",
-    senderName: "Morgan",
-    senderInitials: "M",
-    preview: "Check out this new artist I found",
-    timestamp: "3 days ago",
-  },
-];
 
 export default function Inbox(): JSX.Element {
   const [query, setQuery] = useState("");
+  const [conversations, setConversations] = useState<Conversation[]>([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const { user } = useContext(AuthContext);
 
-  const messages = useMemo(() => {
-    if (!query) return MOCK_MESSAGES;
-    return MOCK_MESSAGES.filter((m) =>
-      m.senderName.toLowerCase().includes(query.toLowerCase()),
-    );
-  }, [query]);
-
-  const handleMessageClick = (messageId: string) => {
-    const message = MOCK_MESSAGES.find((m) => m.id === messageId);
-    if (message) {
-      navigate(`/message/${messageId}`, { state: { userName: message.senderName } });
+  useEffect(() => {
+    async function fetchConversations() {
+      try {
+        const { data } = await axios.get<Conversation[]>(
+          `${import.meta.env.VITE_API_URL}/api/conversations`,
+        );
+        setConversations(data);
+      } catch (err) {
+        console.error("Error fetching conversations:", err);
+      } finally {
+        setLoading(false);
+      }
     }
-  };
+
+    fetchConversations();
+  }, [user?.id]);
+
+  const filtered = useMemo(() => {
+    if (!query) return conversations;
+    return conversations.filter((c) =>
+      c.otherUser.displayName.toLowerCase().includes(query.toLowerCase()),
+    );
+  }, [query, conversations]);
 
   return (
     <div className="bg-white min-h-screen py-8">
       <div className="max-w-5xl mx-auto px-4">
-        {/* Header with title and search */}
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-3">
             <h2 className="text-3xl font-semibold">Inbox</h2>
@@ -85,41 +76,59 @@ export default function Inbox(): JSX.Element {
           </div>
         </div>
 
-        {/* Messages list */}
         <div className="space-y-4">
-          {messages.length > 0 ? (
-            messages.map((m) => (
+          {loading ? (
+            <div className="text-center py-12">
+              <p className="text-gray-500 text-sm">Loading...</p>
+            </div>
+          ) : filtered.length > 0 ? (
+            filtered.map((c) => (
               <div
-                key={m.id}
-                onClick={() => handleMessageClick(m.id)}
+                key={c.id}
+                onClick={() =>
+                  navigate(`/message/${c.id}`, {
+                    state: { userName: c.otherUser.displayName },
+                  })
+                }
                 className="flex items-start gap-4 p-4 bg-white border border-gray-200 rounded-lg hover:shadow-md hover:border-gray-300 transition-all cursor-pointer"
               >
-                {/* Avatar */}
-                <div className="flex-shrink-0 w-12 h-12 rounded-full bg-gradient-to-br from-green-400 to-green-600 text-white flex items-center justify-center font-bold text-sm">
-                  {m.senderInitials ?? "U"}
+                <div className="flex-shrink-0 w-12 h-12 rounded-full bg-gradient-to-br from-green-400 to-green-600 text-white flex items-center justify-center font-bold text-sm overflow-hidden">
+                  {c.otherUser.profilePic ? (
+                    <img
+                      src={c.otherUser.profilePic}
+                      alt={c.otherUser.displayName}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    c.otherUser.displayName[0]?.toUpperCase() ?? "U"
+                  )}
                 </div>
 
-                {/* Message content */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between mb-2">
                     <h3 className="font-semibold text-gray-900 text-sm">
-                      {m.senderName}
+                      {c.otherUser.displayName}
                     </h3>
                   </div>
                   <p className="text-gray-700 text-sm leading-relaxed line-clamp-2">
-                    {m.preview}
+                    {c.last_message?.content ?? "No messages yet"}
                   </p>
                 </div>
 
-                {/* Right arrow indicator */}
-                <div className="flex-shrink-0 text-gray-300">
-                  →
+                <div className="flex-shrink-0 flex items-center gap-2">
+                  {c.last_message?.read === false &&
+                    c.last_message.sender_id !== user?.id && (
+                      <div className="w-2 h-2 rounded-full bg-green-500" />
+                    )}
+                  <span className="text-gray-300">→</span>
                 </div>
               </div>
             ))
           ) : (
             <div className="text-center py-12">
-              <p className="text-gray-500 text-sm">No messages found</p>
+              <p className="text-gray-500 text-sm">
+                {query ? "No conversations found" : "No conversations yet"}
+              </p>
             </div>
           )}
         </div>

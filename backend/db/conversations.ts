@@ -1,7 +1,8 @@
 import { db } from "../firebase.js";
 import {
   collection,
-  addDoc,
+  doc,
+  writeBatch,
   serverTimestamp,
   getDoc,
   getDocs,
@@ -129,6 +130,10 @@ async function createConversation(
   }
 
   const participants = [senderId, recipientId];
+  const timestamp = serverTimestamp();
+
+  const conversationRef = doc(collection(db, "conversations"));
+  const messageRef = doc(collection(db, "messages"));
 
   const newConversation = {
     participants,
@@ -136,16 +141,27 @@ async function createConversation(
       content: initialMessageContent,
       read: false,
       sender_id: senderId,
-      sent_at: serverTimestamp(),
+      sent_at: timestamp,
     },
   };
 
-  const docRef = await addDoc(collection(db, "conversations"), newConversation);
-  const docSnap = await getDoc(docRef);
+  const initialMessage = {
+    sender_id: senderId,
+    conversation_id: conversationRef.id,
+    content: initialMessageContent,
+    sent_at: timestamp,
+  };
+
+  const batch = writeBatch(db);
+  batch.set(conversationRef, newConversation);
+  batch.set(messageRef, initialMessage);
+  await batch.commit();
+
+  const docSnap = await getDoc(conversationRef);
   const docData = docSnap.data();
 
   return {
-    id: docRef.id,
+    id: conversationRef.id,
     ...docData,
   };
 }
