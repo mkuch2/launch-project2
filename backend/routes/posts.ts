@@ -1,5 +1,5 @@
 import express, { type Request, type Response, type Router } from "express";
-import { createPost, deletePost, editPost, getPosts } from "../db/posts.js";
+import { createPost, deletePost, editPost, getPosts, likePost } from "../db/posts.js";
 
 const router: Router = express.Router();
 
@@ -31,13 +31,14 @@ router.get("/user/:userId", async function (req: Request, res: Response) {
 
 router.get("/forum/:forumId", async function (req: Request, res: Response) {
   const forumId = req.params.forumId ?? null;
+  const viewerId = typeof req.query.viewerId === "string" ? req.query.viewerId : undefined;
 
   if (!forumId || Array.isArray(forumId)) {
     return res.status(400).json({ error: "Forum ID missing" });
   }
 
   try {
-    const posts = await getPosts({ forumId });
+    const posts = await getPosts({ forumId, viewerId });
     return res.status(200).json(posts);
   } catch (err) {
     console.error("Error attempting to get forum posts:", err);
@@ -81,6 +82,27 @@ router.patch("/:postId", async function (req: Request, res: Response) {
   } catch (err) {
     console.error("Error editing post:", err);
     return res.status(500).json({ error: "Server error editing post" });
+  }
+});
+
+router.post("/:postId/likes", async function (req: Request, res: Response) {
+  const postId = req.params.postId ?? null;
+  const { user } = req.body;
+
+  if (!postId || Array.isArray(postId)) {
+    return res.status(400).json({ error: "Post ID missing" });
+  }
+
+  if (!user || !user.id) {
+    return res.status(400).json({ error: "user is required" });
+  }
+
+  try {
+    const likedPost = await likePost(postId, user);
+    return res.status(200).json(likedPost);
+  } catch (err) {
+    console.error("Error liking post:", err);
+    return res.status(500).json({ error: "Server error liking post" });
   }
 });
 

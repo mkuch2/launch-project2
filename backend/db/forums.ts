@@ -56,6 +56,7 @@ async function getForums() {
 
 async function createForum(author: PrivateUser, name: string) {
   if (!author || !name) throw new Error("author and name are required");
+
   const forumData = { author, name };
   const docRef = await addDoc(collection(db, "forums"), {
     ...forumData,

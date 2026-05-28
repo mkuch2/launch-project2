@@ -62,6 +62,7 @@ export interface Post {
   title: string;
   content: string;
   likes: Number;
+  likedByCurrentUser?: boolean;
   createdAt: Timestamp | FieldValue;
   forumId: string;
 }
