@@ -16,11 +16,13 @@
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "firebase": "^12.13.0",
+    "lint": "^1.2.2",
     "tsx": "^4.22.3"
   },
   "devDependencies": {
     "@types/cookie-parser": "^1.4.10",
     "@types/express": "^5.0.6",
+    "eslint": "^10.4.0",
     "install": "^0.13.0",
     "nodemon": "^3.1.14"
   }
