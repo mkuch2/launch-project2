@@ -22,7 +22,7 @@ export const firebaseTimestampToString = (value: unknown): string => {
     typeof (value as FirebaseTimestamp).toDate === "function"
   ) {
     const fn = (value as FirebaseTimestamp).toDate;
-    if (typeof fn === "function") return fn.call(value).toLocaleString();
+    if (typeof fn === "function") return fn.call(value).toLocaleDateString();
   }
 
   if (
@@ -33,7 +33,7 @@ export const firebaseTimestampToString = (value: unknown): string => {
   ) {
     const fn = (value as FirebaseTimestamp).toMillis;
     if (typeof fn === "function")
-      return new Date(fn.call(value)).toLocaleString();
+      return new Date(fn.call(value)).toLocaleDateString();
   }
 
   // Handle Firestore's plain JSON representation: { seconds: number, nanoseconds: number }
@@ -47,7 +47,9 @@ export const firebaseTimestampToString = (value: unknown): string => {
     const secs = Number(anyVal.seconds);
     const nanos = Number(anyVal.nanoseconds);
     if (!Number.isNaN(secs) && !Number.isNaN(nanos)) {
-      return new Date(secs * 1000 + Math.floor(nanos / 1e6)).toLocaleString();
+      return new Date(
+        secs * 1000 + Math.floor(nanos / 1e6),
+      ).toLocaleDateString();
     }
   }
 

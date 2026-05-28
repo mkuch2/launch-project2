@@ -1,22 +1,18 @@
 import type { PrivateUser } from "../../../types";
-import "./styles/ForumPreview.css";
+import "./styles/ForumCard.css";
 
-export interface ForumPreviewProps {
+export interface ForumCardProps {
   author: PrivateUser;
   name: string;
   createdAt: string;
 }
 
-export default function ForumPreview({
-  author,
-  name,
-  createdAt,
-}: ForumPreviewProps) {
+export default function ForumCard({ author, name, createdAt }: ForumCardProps) {
   return (
     <div className="forum-preview">
       <div className="forum-preview-header">
         <h3 className="forum-preview-name">{name}</h3>
-        <span className="forum-preview-timestamp">Created {createdAt}</span>
+        <span className="forum-preview-timestamp">{createdAt}</span>
       </div>
 
       <span className="forum-preview-author">

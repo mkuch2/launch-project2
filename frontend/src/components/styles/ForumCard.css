@@ -9,6 +9,9 @@ a {
   padding: 1.25rem;
   border-radius: 12px;
   border: 1px solid #ddd;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 180px;
 }
 
 .forum-preview-header {
@@ -26,6 +29,8 @@ a {
 .forum-preview-author {
   color: #777;
   font-size: 0.95rem;
+  margin-top: auto;
+  align-self: flex-start;
 }
 
 .forum-preview-timestamp {
