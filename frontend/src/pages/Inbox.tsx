@@ -101,7 +101,7 @@ export default function Inbox(): JSX.Element {
                   key={c.id}
                   onClick={() =>
                     navigate(`/message/${c.id}`, {
-                      state: { userName: c.otherUser.displayName },
+                      state: { userName: c.otherUser.displayName, profilePic: c.otherUser.profilePic },
                     })
                   }
                   className="flex items-start gap-4 p-4 bg-white border border-gray-200 rounded-lg hover:shadow-md hover:border-gray-300 transition-all cursor-pointer"
