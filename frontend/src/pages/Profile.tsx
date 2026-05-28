@@ -1,13 +1,24 @@
 import { useEffect, useState, useContext } from "react";
+import { useParams } from "react-router";
 import axios from "axios";
 import { AuthContext } from "../AuthContext";
-import type { PrivateUser } from "../../../types";
+import type { PrivateUser, Song, Artist } from "../../../types";
 import "./styles/Profile.css";
+
+type ProfileUser = PrivateUser & {
+  topSongAllTime?: Song[];
+  topArtistAllTime?: Artist[];
+  likedSongs?: Song[];
+};
 
 export default function Profile() {
   const { user } = useContext(AuthContext);
+  const { userId } = useParams();
 
-  const [profile, setProfile] = useState<PrivateUser | null>(null);
+  const profileId = userId || user?.id;
+  const isOwnProfile = !userId || userId === user?.id;
+
+  const [profile, setProfile] = useState<ProfileUser | null>(null);
   const [isPublic, setIsPublic] = useState(true);
   const [showTopSongs, setShowTopSongs] = useState(false);
   const [showTopArtists, setShowTopArtists] = useState(false);
@@ -15,11 +26,11 @@ export default function Profile() {
 
   useEffect(() => {
     async function fetchProfile() {
-      if (!user?.id) return;
+      if (!profileId) return;
 
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_API_URL}/api/users/${user.id}`,
+          `${import.meta.env.VITE_API_URL}/api/users/${profileId}`,
         );
 
         setProfile(response.data);
@@ -33,7 +44,7 @@ export default function Profile() {
     }
 
     fetchProfile();
-  }, [user]);
+  }, [profileId]);
 
   async function updateProfile(
     updates: Partial<{
@@ -61,6 +72,10 @@ export default function Profile() {
     return <div className="profile-page">Loading...</div>;
   }
 
+  if (!isOwnProfile && profile.isPublic === false) {
+    return <div className="profile-page">This profile is private.</div>;
+  }
+
   return (
     <div className="profile-page">
       <div className="profile-header">
@@ -80,81 +95,134 @@ export default function Profile() {
         </div>
       </div>
 
-      <div className="profile-card">
-        <button className="profile-button">Edit Name</button>
-
-        <div className="profile-toggle-row">
-          <div>
-            <h2>Profile Visibility</h2>
-            <p>{isPublic ? "Public" : "Private"}</p>
-          </div>
-
-          <button
-            className={isPublic ? "toggle toggle-on" : "toggle"}
+      {isOwnProfile && (
+        <div className="profile-card">
+          <ToggleRow
+            title="Profile Visibility"
+            description={isPublic ? "Public" : "Private"}
+            value={isPublic}
             onClick={() => {
               const newValue = !isPublic;
               setIsPublic(newValue);
               updateProfile({ isPublic: newValue });
             }}
-          >
-            <span></span>
-          </button>
-        </div>
+          />
 
-        <div className="profile-toggle-row">
-          <div>
-            <h2>Show Top Songs</h2>
-            <p>{showTopSongs ? "Visible on profile" : "Hidden from profile"}</p>
-          </div>
-
-          <button
-            className={showTopSongs ? "toggle toggle-on" : "toggle"}
+          <ToggleRow
+            title="Show Top Songs"
+            description={showTopSongs ? "Visible on profile" : "Hidden from profile"}
+            value={showTopSongs}
             onClick={() => {
               const newValue = !showTopSongs;
               setShowTopSongs(newValue);
               updateProfile({ showTopSongs: newValue });
             }}
-          >
-            <span></span>
-          </button>
-        </div>
+          />
 
-        <div className="profile-toggle-row">
-          <div>
-            <h2>Show Top Artists</h2>
-            <p>{showTopArtists ? "Visible on profile" : "Hidden from profile"}</p>
-          </div>
-
-          <button
-            className={showTopArtists ? "toggle toggle-on" : "toggle"}
+          <ToggleRow
+            title="Show Top Artists"
+            description={showTopArtists ? "Visible on profile" : "Hidden from profile"}
+            value={showTopArtists}
             onClick={() => {
               const newValue = !showTopArtists;
               setShowTopArtists(newValue);
               updateProfile({ showTopArtists: newValue });
             }}
-          >
-            <span></span>
-          </button>
-        </div>
+          />
 
-        <div className="profile-toggle-row">
-          <div>
-            <h2>Show Liked Songs</h2>
-            <p>{showLikedSongs ? "Visible on profile" : "Hidden from profile"}</p>
-          </div>
-
-          <button
-            className={showLikedSongs ? "toggle toggle-on" : "toggle"}
+          <ToggleRow
+            title="Show Liked Songs"
+            description={showLikedSongs ? "Visible on profile" : "Hidden from profile"}
+            value={showLikedSongs}
             onClick={() => {
               const newValue = !showLikedSongs;
               setShowLikedSongs(newValue);
               updateProfile({ showLikedSongs: newValue });
             }}
-          >
-            <span></span>
-          </button>
+          />
         </div>
+      )}
+
+      <div className="profile-sections">
+          {showTopSongs && (
+            <MusicSection title="Top Songs" items={profile.topSongAllTime} />
+          )}
+
+          {showTopArtists && (
+            <MusicSection title="Top Artists" items={profile.topArtistAllTime} />
+          )}
+
+          {showLikedSongs && (
+            <MusicSection title="Liked Songs" items={profile.likedSongs} />
+          )}
+
+          {!showTopSongs && !showTopArtists && !showLikedSongs && (
+            <p className="profile-empty">This user has not shared any music yet.</p>
+          )}
+        </div>
+    </div>
+  );
+}
+
+function ToggleRow({
+  title,
+  description,
+  value,
+  onClick,
+}: {
+  title: string;
+  description: string;
+  value: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <div className="profile-toggle-row">
+      <div>
+        <h2>{title}</h2>
+        <p>{description}</p>
       </div>
+
+      <button className={value ? "toggle toggle-on" : "toggle"} onClick={onClick}>
+        <span></span>
+      </button>
+    </div>
+  );
+}
+
+function MusicSection({
+  title,
+  items,
+}: {
+  title: string;
+  items?: (Song | Artist)[];
+}) {
+  return (
+    <div className="profile-music-section">
+      <h2>{title}</h2>
+
+      {!items || items.length === 0 ? (
+        <p className="profile-empty">Nothing to show yet.</p>
+      ) : (
+        <div className="music-grid">
+          {items.map((item) => (
+            <div className="music-card" key={item.id}>
+              {"album" in item && item.album?.images?.[0]?.url && (
+                <img src={item.album.images[0].url} alt={item.name} />
+              )}
+
+              {"images" in item && item.images?.[0]?.url && (
+                <img src={item.images[0].url} alt={item.name} />
+              )}
+
+              <h2>{item.name}</h2>
+
+              {"artists" in item && item.artists && (
+                <p>{item.artists.map((artist) => artist.name).join(", ")}</p>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

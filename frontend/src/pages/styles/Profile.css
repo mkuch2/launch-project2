@@ -113,3 +113,21 @@
 .toggle-on span {
   transform: translateX(24px);
 } 
+
+.profile-sections {
+  margin-top: 3rem;
+}
+
+.profile-music-section {
+  margin-bottom: 3rem;
+}
+
+.profile-music-section h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.profile-empty {
+  color: #777;
+  font-size: 1rem;
+}
