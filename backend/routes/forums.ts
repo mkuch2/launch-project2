@@ -85,6 +85,10 @@ router.patch("/:forumId", async (req, res) => {
     });
   }
 
+  if (updates?.name.trim() === "") {
+    return res.status(400).json({ error: "Forum name can not be empty." });
+  }
+
   try {
     const updatedForum = await editForum(forumId, updates);
     return res.status(200).json(updatedForum);
