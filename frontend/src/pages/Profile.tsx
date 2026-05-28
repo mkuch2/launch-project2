@@ -12,7 +12,7 @@ type ProfileUser = PrivateUser & {
 };
 
 export default function Profile() {
-  const { user } = useContext(AuthContext);
+  const { user, logout } = useContext(AuthContext);
   const { userId } = useParams();
 
   const profileId = userId || user?.id;
@@ -94,6 +94,9 @@ export default function Profile() {
             <h1 className="profile-title">{profile.displayName}</h1>
             <p className="profile-username">@{profile.displayName}</p>
           </div>
+          <button className="logout-button" onClick={logout}>
+            Logout {/* Can replace with message button when you view other users */}
+          </button>
         </div>
 
         {isOwnProfile && (
