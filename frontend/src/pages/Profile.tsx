@@ -78,88 +78,114 @@ export default function Profile() {
 
   return (
     <div className="profile-page">
-      <div className="profile-header">
-        {profile.profilePic ? (
-          <img
-            className="profile-image"
-            src={profile.profilePic}
-            alt={profile.displayName}
-          />
-        ) : (
-          <div className="profile-avatar">{profile.displayName?.[0]}</div>
-        )}
+      <div className="profile-top">
+        <div className="profile-header">
+          {profile.profilePic ? (
+            <img
+              className="profile-image"
+              src={profile.profilePic}
+              alt={profile.displayName}
+            />
+          ) : (
+            <div className="profile-avatar">{profile.displayName?.[0]}</div>
+          )}
 
-        <div>
-          <h1 className="profile-title">{profile.displayName}</h1>
-          <p className="profile-username">@{profile.displayName}</p>
+          <div>
+            <h1 className="profile-title">{profile.displayName}</h1>
+            <p className="profile-username">@{profile.displayName}</p>
+          </div>
         </div>
+
+        {isOwnProfile && (
+          <div className="profile-card profile-card--compact">
+            <ToggleRow
+              title="Public"
+              description={isPublic ? "On" : "Off"}
+              value={isPublic}
+              onClick={() => {
+                const newValue = !isPublic;
+                setIsPublic(newValue);
+                updateProfile({ isPublic: newValue });
+              }}
+            />
+
+            <ToggleRow
+              title="Top Songs"
+              description={showTopSongs ? "Shown" : "Hidden"}
+              value={showTopSongs}
+              onClick={() => {
+                const newValue = !showTopSongs;
+                setShowTopSongs(newValue);
+                updateProfile({ showTopSongs: newValue });
+              }}
+            />
+
+            <ToggleRow
+              title="Top Artists"
+              description={showTopArtists ? "Shown" : "Hidden"}
+              value={showTopArtists}
+              onClick={() => {
+                const newValue = !showTopArtists;
+                setShowTopArtists(newValue);
+                updateProfile({ showTopArtists: newValue });
+              }}
+            />
+
+            <ToggleRow
+              title="Liked Songs"
+              description={showLikedSongs ? "Shown" : "Hidden"}
+              value={showLikedSongs}
+              onClick={() => {
+                const newValue = !showLikedSongs;
+                setShowLikedSongs(newValue);
+                updateProfile({ showLikedSongs: newValue });
+              }}
+            />
+          </div>
+        )}
       </div>
 
-      {isOwnProfile && (
-        <div className="profile-card">
-          <ToggleRow
-            title="Profile Visibility"
-            description={isPublic ? "Public" : "Private"}
-            value={isPublic}
-            onClick={() => {
-              const newValue = !isPublic;
-              setIsPublic(newValue);
-              updateProfile({ isPublic: newValue });
-            }}
-          />
-
-          <ToggleRow
-            title="Show Top Songs"
-            description={showTopSongs ? "Visible on profile" : "Hidden from profile"}
-            value={showTopSongs}
-            onClick={() => {
-              const newValue = !showTopSongs;
-              setShowTopSongs(newValue);
-              updateProfile({ showTopSongs: newValue });
-            }}
-          />
-
-          <ToggleRow
-            title="Show Top Artists"
-            description={showTopArtists ? "Visible on profile" : "Hidden from profile"}
-            value={showTopArtists}
-            onClick={() => {
-              const newValue = !showTopArtists;
-              setShowTopArtists(newValue);
-              updateProfile({ showTopArtists: newValue });
-            }}
-          />
-
-          <ToggleRow
-            title="Show Liked Songs"
-            description={showLikedSongs ? "Visible on profile" : "Hidden from profile"}
-            value={showLikedSongs}
-            onClick={() => {
-              const newValue = !showLikedSongs;
-              setShowLikedSongs(newValue);
-              updateProfile({ showLikedSongs: newValue });
-            }}
-          />
-        </div>
-      )}
-
       <div className="profile-sections">
-          {showTopSongs && (
-            <MusicSection title="Top Songs" items={profile.topSongAllTime} />
-          )}
+        {showTopSongs && (
+          <MusicSection
+            title="Top Songs"
+            items={profile.topSongAllTime}
+            emptyMessage={
+              isOwnProfile
+                ? "Visit Top Songs once to add them to your profile."
+                : "Nothing to show yet."
+            }
+          />
+        )}
 
-          {showTopArtists && (
-            <MusicSection title="Top Artists" items={profile.topArtistAllTime} />
-          )}
+        {showTopArtists && (
+          <MusicSection
+            title="Top Artists"
+            items={profile.topArtistAllTime}
+            emptyMessage={
+              isOwnProfile
+                ? "Visit Top Artists once to add them to your profile."
+                : "Nothing to show yet."
+            }
+          />
+        )}
 
-          {showLikedSongs && (
-            <MusicSection title="Liked Songs" items={profile.likedSongs} />
-          )}
+        {showLikedSongs && (
+          <MusicSection
+            title="Liked Songs"
+            items={profile.likedSongs}
+            emptyMessage={
+              isOwnProfile
+                ? "Visit Liked Songs once to add them to your profile."
+                : "Nothing to show yet."
+            }
+          />
+        )}
 
-          {!showTopSongs && !showTopArtists && !showLikedSongs && (
-            <p className="profile-empty">This user has not shared any music yet.</p>
-          )}
-        </div>
+        {!showTopSongs && !showTopArtists && !showLikedSongs && (
+          <p className="profile-empty">This user has not shared any music yet.</p>
+        )}
+      </div>
     </div>
   );
 }
@@ -192,16 +218,18 @@ function ToggleRow({
 function MusicSection({
   title,
   items,
+  emptyMessage,
 }: {
   title: string;
   items?: (Song | Artist)[];
+  emptyMessage: string;
 }) {
   return (
     <div className="profile-music-section">
       <h2>{title}</h2>
 
       {!items || items.length === 0 ? (
-        <p className="profile-empty">Nothing to show yet.</p>
+        <p className="profile-empty">{emptyMessage}</p>
       ) : (
         <div className="music-grid">
           {items.map((item) => (

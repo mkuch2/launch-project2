@@ -4,11 +4,18 @@
   padding: 3rem;
 }
 
+.profile-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
 .profile-header {
   display: flex;
   align-items: center;
   gap: 2rem;
-  margin-bottom: 3rem;
 }
 
 .profile-image,
@@ -44,63 +51,47 @@
   padding: 2rem;
   border-radius: 12px;
   border: 1px solid #ddd;
-  max-width: 500px;
 }
 
-.profile-button {
-  padding: 0.65rem 1rem;
-  border: none;
-  border-radius: 999px;
-  background-color: #222;
-  color: white;
-  cursor: pointer;
-  margin-bottom: 1.5rem;
-}
-
-.profile-option {
-  margin-bottom: 1rem;
-}
-
-.profile-option label {
+.profile-card--compact {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  font-size: 1rem;
+  gap: 1.5rem;
+  padding: 1rem 1.5rem;
+  width: fit-content;
 }
 
 .profile-toggle-row {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 1.5rem;
-  padding: 1rem 0;
-  border-top: 1px solid #ddd;
+  gap: 0.75rem;
 }
 
 .profile-toggle-row h2 {
-  font-size: 1rem;
-  margin-bottom: 0.25rem;
+  font-size: 0.85rem;
+  margin-bottom: 0.1rem;
 }
 
 .profile-toggle-row p {
   color: #777;
-  font-size: 0.95rem;
+  font-size: 0.75rem;
 }
 
 .toggle {
-  width: 52px;
-  height: 28px;
+  width: 42px;
+  height: 24px;
   border: none;
   border-radius: 999px;
   background-color: #ccc;
   padding: 3px;
   cursor: pointer;
+  flex-shrink: 0;
 }
 
 .toggle span {
   display: block;
-  width: 22px;
-  height: 22px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
   background-color: white;
   transition: transform 0.2s ease;
@@ -111,11 +102,11 @@
 }
 
 .toggle-on span {
-  transform: translateX(24px);
-} 
+  transform: translateX(18px);
+}
 
 .profile-sections {
-  margin-top: 3rem;
+  margin-top: 2rem;
 }
 
 .profile-music-section {
@@ -130,4 +121,18 @@
 .profile-empty {
   color: #777;
   font-size: 1rem;
+}
+
+@media (max-width: 900px) {
+  .profile-top {
+    flex-direction: column;
+  }
+
+  .profile-card--compact {
+    width: 100%;
+  }
+}
+
+.profile-toggle-row > div {
+  min-width: 80px;
 }
