@@ -51,7 +51,11 @@ export default function Forums() {
     const newForumTempId = `new-${Date.now()}`;
     const newForumTemp: Forum = {
       id: newForumTempId,
-      author: { id: user.id, displayName: user.displayName },
+      author: {
+        id: user.id,
+        displayName: user.displayName,
+        profilePic: user.profilePic ?? "",
+      },
       name: forumName.trim(),
       createdAt: Timestamp.now(),
     };
@@ -64,7 +68,11 @@ export default function Forums() {
       const response = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/forums`,
         {
-          author: { id: user.id, displayName: user.displayName },
+          author: {
+            id: user.id,
+            displayName: user.displayName,
+            profilePic: user.profilePic ?? "",
+          },
           name: newForumTemp.name,
         },
       );
