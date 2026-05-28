@@ -24,7 +24,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   const logout = () => {
     console.log("Logging out");
     localStorage.removeItem("user");
-    window.location.href = "/login";
+    window.location.href = "/";
     setUser(null);
   };
 

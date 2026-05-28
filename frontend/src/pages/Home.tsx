@@ -26,24 +26,25 @@ function Home() {
       try {
         setLoading(true);
 
-        const [userResponse, forumsResponse, usersResponse] =
-          await Promise.all([
+        const [userResponse, forumsResponse, usersResponse] = await Promise.all(
+          [
             axios.get<PublicUser>(
-              `${import.meta.env.VITE_API_URL}/api/users/${user.id}`
+              `${import.meta.env.VITE_API_URL}/api/users/${user.id}`,
             ),
             axios.get<ForumPreview[]>(
-              `${import.meta.env.VITE_API_URL}/api/forums`
+              `${import.meta.env.VITE_API_URL}/api/forums`,
             ),
             axios.get<PublicUser[]>(
-              `${import.meta.env.VITE_API_URL}/api/users`
+              `${import.meta.env.VITE_API_URL}/api/users`,
             ),
-          ]);
+          ],
+        );
 
         setPublicUser(userResponse.data);
         setForums(forumsResponse.data || []);
 
         const publicUsers = (usersResponse.data || []).filter(
-          (person) => person.isPublic && person.id !== user.id
+          (person) => person.isPublic && person.id !== user.id,
         );
 
         setUsers(publicUsers);
@@ -72,7 +73,10 @@ function Home() {
             </p>
 
             <div className="home-actions">
-              <Link to="/login" className="primary-button">
+              <Link
+                to={`${import.meta.env.VITE_API_URL}/spotify/login`}
+                className="primary-button"
+              >
                 Log in with Spotify
               </Link>
             </div>
@@ -164,23 +168,23 @@ function Home() {
           <div className="people-grid">
             {users.slice(0, 4).map((person) => (
               <Link
-              to={`/profile/${person.id}`}
-              className="person-card"
-              key={person.id}
-            >
-              {person.profilePic ? (
-                <img src={person.profilePic} alt={person.displayName} />
-              ) : (
-                <div className="person-avatar">
-                  {person.displayName?.charAt(0).toUpperCase() || "R"}
-                </div>
-              )}
+                to={`/profile/${person.id}`}
+                className="person-card"
+                key={person.id}
+              >
+                {person.profilePic ? (
+                  <img src={person.profilePic} alt={person.displayName} />
+                ) : (
+                  <div className="person-avatar">
+                    {person.displayName?.charAt(0).toUpperCase() || "R"}
+                  </div>
+                )}
 
-              <div className="person-card-content">
-                <h3>{person.displayName}</h3>
-                <p>View profile.</p>
-              </div>
-            </Link>
+                <div className="person-card-content">
+                  <h3>{person.displayName}</h3>
+                  <p>View profile.</p>
+                </div>
+              </Link>
             ))}
           </div>
         ) : (
