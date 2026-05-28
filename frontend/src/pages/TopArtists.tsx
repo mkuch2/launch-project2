@@ -31,12 +31,14 @@ export default function TopArtists() {
         const fetchedArtists = response.data.items || response.data || [];
 
         setArtists(fetchedArtists);
+        
+        const artistsToSave = fetchedArtists.slice(0, 10);
 
         if (user?.id && timeRange === "long_term") {
           await axios.patch(
             `${import.meta.env.VITE_API_URL}/api/users/${user.id}`,
             {
-              topArtistAllTime: fetchedArtists,
+              topArtistAllTime: artistsToSave,
             },
           );
         }

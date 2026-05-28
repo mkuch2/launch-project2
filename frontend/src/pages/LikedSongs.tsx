@@ -1,7 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import type { Song } from "../../../types";
 import SongCard from "../components/SongCard";
 import "./styles/LikedSongs.css";
+import { AuthContext } from "../AuthContext";
+import axios from "axios";
 
 interface SpotifyTrackItem {
   track: {
@@ -19,15 +21,19 @@ export default function LikedSongs() {
   const [songs, setSongs] = useState<Song[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const { user } = useContext(AuthContext);
 
   useEffect(() => {
     async function fetchLikedSongs() {
       try {
-        const response = await fetch("http://localhost:5005/spotify/liked-songs", {
+        const response = await fetch("http://127.0.0.1:5005/spotify/liked-songs", {
           credentials: "include",
         });
 
         if (!response.ok) {
+          const errorData = await response.json();
+          console.log("Liked songs error:", response.status, errorData);
+
           throw new Error("Failed to fetch liked songs");
         }
 
@@ -36,12 +42,25 @@ export default function LikedSongs() {
         const songs: Song[] = data.items.map((item: SpotifyTrackItem) => ({
           id: item.track.id,
           name: item.track.name,
-          albumName: item.track.album.name,
-          albumCover: item.track.album.images[0]?.url ?? "",
-          artists: item.track.artists.map((a) => a.name),
+          album: {
+            images: item.track.album.images,
+          },
+          artists: item.track.artists,
         }));
 
+        const songsToSave = songs.slice(0, 10);
+
         setSongs(songs);
+
+        if (user?.id) {
+          await axios.patch(
+            `${import.meta.env.VITE_API_URL}/api/users/${user.id}`,
+            {
+              likedSongs: songsToSave,
+              likedSongsCount: songs.length,
+            },
+          );
+        }
       } catch (err) {
         setError("Could not load liked songs. Please try again.");
         console.error(err);

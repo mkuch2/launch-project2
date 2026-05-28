@@ -30,13 +30,15 @@ export default function TopSongs() {
 
        const fetchedSongs = response.data.items || response.data || [];
 
+        const songsToSave = fetchedSongs.slice(0, 10);
+
         setSongs(fetchedSongs);
 
         if (user?.id && timeRange === "long_term") {
           await axios.patch(
             `${import.meta.env.VITE_API_URL}/api/users/${user.id}`,
             {
-              topSongAllTime: fetchedSongs,
+              topSongAllTime: songsToSave,
             },
           );
         }
