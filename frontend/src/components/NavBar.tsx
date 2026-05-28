@@ -1,4 +1,4 @@
-import { NavLink } from "react-router";
+import { NavLink, Link } from "react-router";
 import { useContext } from "react";
 import { AuthContext } from "../AuthContext";
 
@@ -48,9 +48,12 @@ export default function NavBar() {
             )}
           </NavLink>
         ) : (
-          <NavLink className="login-button" to="/login">
+          <Link
+            className="login-button"
+            to={`${import.meta.env.VITE_API_URL}/spotify/login`}
+          >
             Login
-          </NavLink>
+          </Link>
         )}
       </nav>
     </div>
