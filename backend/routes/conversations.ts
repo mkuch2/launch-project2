@@ -1,5 +1,6 @@
 import express from "express";
 import { createConversation, getConversations } from "../db/conversations.js";
+import { getUsersByIds } from "../db/users.js";
 import type { RequestWithUser } from "../types/request.js";
 
 const router = express.Router();
@@ -26,7 +27,27 @@ router.get("/", async (req: RequestWithUser, res) => {
 
   try {
     const conversations = await getConversations(userId);
-    return res.status(200).json(conversations);
+
+    const otherUserIds = [
+      ...new Set(
+        conversations.flatMap((c: any) =>
+          (c.participants as string[]).filter((id) => id !== userId),
+        ),
+      ),
+    ];
+    const usersById = await getUsersByIds(otherUserIds);
+
+    const enriched = conversations.map((c: any) => {
+      const otherUserId = (c.participants as string[]).find((id) => id !== userId);
+      return {
+        ...c,
+        otherUser: otherUserId
+          ? (usersById[otherUserId] ?? { id: otherUserId, displayName: "Unknown" })
+          : { id: null, displayName: "Unknown" },
+      };
+    });
+
+    return res.status(200).json(enriched);
   } catch (err) {
     console.error("Error when attempting to fetch conversations: ", err);
     return res.status(500).json({

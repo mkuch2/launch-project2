@@ -11,6 +11,7 @@ import Discover from "./pages/Discover.tsx";
 import Forum from "./pages/Forum.tsx";
 import Forums from "./pages/Forums.tsx";
 import Inbox from "./pages/Inbox.tsx";
+import Message from "./pages/Message.tsx";
 import { createBrowserRouter, Outlet, RouterProvider } from "react-router";
 import { AuthProvider } from "./AuthContext.tsx";
 import RequireAuth from "./components/RequireAuth.tsx";
@@ -71,6 +72,10 @@ const router = createBrowserRouter([
           {
             path: "inbox",
             element: <Inbox />,
+          },
+          {
+            path: "message/:conversationId",
+            element: <Message />,
           },
         ],
       },
