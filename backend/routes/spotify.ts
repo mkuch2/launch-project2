@@ -121,4 +121,34 @@ router.get("/top-songs", async (req, res) => {
   }
 });
 
+router.get("/liked-songs", async (req: express.Request, res: express.Response) => {
+  try {
+    const accessToken = req.cookies.spotify_access_token;
+
+    if (!accessToken) {
+      return res.status(400).json({ error: "Missing Spotify access token" });
+    }
+
+    const response = await fetch(
+      "https://api.spotify.com/v1/me/tracks?limit=50",
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      return res.status(response.status).json(data);
+    }
+
+    res.json(data);
+  } catch (error) {
+    console.error("Error fetching liked songs:", error);
+    res.status(500).json({ error: "Failed to fetch liked songs" });
+  }
+});
+
 export { router };
