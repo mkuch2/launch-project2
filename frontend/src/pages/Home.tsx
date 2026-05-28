@@ -77,16 +77,17 @@ function Home() {
           </p>
 
           <div className="home-actions">
-            <Link to="/top-songs" className="primary-button">
-              Top Songs
-            </Link>
 
-            <Link to="/discover" className="secondary-button">
+            <Link to="/discover" className="primary-button">
               Discover Users
             </Link>
 
-            <Link to="/forum" className="secondary-button">
+            <Link to="/forum" className="primary-button">
               Forums
+            </Link>
+
+            <Link to="/inbox" className="primary-button">
+              Inbox
             </Link>
 
           </div>
