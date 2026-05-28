@@ -2,15 +2,9 @@ import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { AuthContext } from "../AuthContext";
 import "./styles/musicPages.css";
+import type { Artist } from "../../../types";
 
 type TimeRange = "long_term" | "medium_term" | "short_term";
-
-type Artist = {
-  id: string;
-  name: string;
-  genres?: string[];
-  images?: { url: string }[];
-};
 
 export default function TopArtists() {
   const { user } = useContext(AuthContext);
@@ -31,10 +25,23 @@ export default function TopArtists() {
           {
             params: { timeRange },
             withCredentials: true,
-          }
+          },
         );
 
-        setArtists(response.data.items || response.data || []);
+        const fetchedArtists = response.data.items || response.data || [];
+
+        setArtists(fetchedArtists);
+        
+        const artistsToSave = fetchedArtists.slice(0, 10);
+
+        if (user?.id && timeRange === "long_term") {
+          await axios.patch(
+            `${import.meta.env.VITE_API_URL}/api/users/${user.id}`,
+            {
+              topArtistAllTime: artistsToSave,
+            },
+          );
+        }
       } catch (err) {
         console.error("Error fetching top artists:", err);
         setError("Could not load top artists.");
@@ -50,7 +57,7 @@ export default function TopArtists() {
     <main className="music-page">
       <section className="music-header">
         <h1 className="music-title">Top Artists</h1>
-        <p className="music-username">{user?.displayName || user?.username || "Username"}</p>
+        <p className="music-username">{user?.displayName || "Username"}</p>
       </section>
 
       <div className="filter-buttons">
@@ -84,7 +91,9 @@ export default function TopArtists() {
           {artists.map((artist) => (
             <article className="music-card" key={artist.id}>
               <img
-                src={artist.images?.[0]?.url || "https://via.placeholder.com/300"}
+                src={
+                  artist.images?.[0]?.url || "https://via.placeholder.com/300"
+                }
                 alt={artist.name}
               />
 

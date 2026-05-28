@@ -10,9 +10,15 @@ router.get("/login", function (req, res) {
   const scope =
     "user-read-private user-read-email user-library-read user-top-read";
 
+  const clientId = process.env.SPOTIFY_WEBAPI_ID;
+
+  if (!clientId) {
+    throw new Error("Missing SPOTIFY_WEBAPI_ID");
+  }
+
   const searchParams = new URLSearchParams({
     response_type: "code",
-    client_id: process.env.SPOTIFY_WEBAPI_ID,
+    client_id: clientId,
     scope,
     redirect_uri:
       process.env.SPOTIFY_WEBAPI_REDIRECT_URI ||
@@ -28,7 +34,7 @@ router.get("/login", function (req, res) {
   );
 });
 
-router.get("/user-profile", async function (req, res) {
+router.get("/user-profile", async function (req: express.Request, res: express.Response) {
   console.log("Cookies: ", req.cookies);
   const accessToken = req.cookies.spotify_access_token;
 
@@ -53,7 +59,7 @@ router.get("/user-profile", async function (req, res) {
   }
 });
 
-router.get("/top-artists", async (req, res) => {
+router.get("/top-artists", async (req: express.Request, res: express.Response) => {
   try {
     const accessToken = req.cookies.spotify_access_token;
     const timeRange = req.query.timeRange || "long_term";
@@ -112,6 +118,36 @@ router.get("/top-songs", async (req, res) => {
   } catch (error) {
     console.error("Error fetching top songs:", error);
     res.status(500).json({ error: "Failed to fetch top songs" });
+  }
+});
+
+router.get("/liked-songs", async (req: express.Request, res: express.Response) => {
+  try {
+    const accessToken = req.cookies.spotify_access_token;
+
+    if (!accessToken) {
+      return res.status(400).json({ error: "Missing Spotify access token" });
+    }
+
+    const response = await fetch(
+      "https://api.spotify.com/v1/me/tracks?limit=50",
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      return res.status(response.status).json(data);
+    }
+
+    res.json(data);
+  } catch (error) {
+    console.error("Error fetching liked songs:", error);
+    res.status(500).json({ error: "Failed to fetch liked songs" });
   }
 });
 

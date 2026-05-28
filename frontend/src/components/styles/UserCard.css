@@ -59,3 +59,10 @@
   .user-card__button:hover {
     background-color: #444444;
   }
+
+  .user-card__avatar-image {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+}

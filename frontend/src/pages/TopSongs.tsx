@@ -2,21 +2,9 @@ import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { AuthContext } from "../AuthContext";
 import "./styles/musicPages.css";
+import type { Song } from "../../../types";
 
 type TimeRange = "long_term" | "medium_term" | "short_term";
-
-type Song = {
-  id: string;
-  name: string;
-  artists?: {
-    name: string;
-  }[];
-  album?: {
-    images?: {
-      url: string;
-    }[];
-  };
-};
 
 export default function TopSongs() {
   const { user } = useContext(AuthContext);
@@ -37,10 +25,23 @@ export default function TopSongs() {
           {
             params: { timeRange },
             withCredentials: true,
-          }
+          },
         );
 
-        setSongs(response.data.items || response.data || []);
+       const fetchedSongs = response.data.items || response.data || [];
+
+        const songsToSave = fetchedSongs.slice(0, 10);
+
+        setSongs(fetchedSongs);
+
+        if (user?.id && timeRange === "long_term") {
+          await axios.patch(
+            `${import.meta.env.VITE_API_URL}/api/users/${user.id}`,
+            {
+              topSongAllTime: songsToSave,
+            },
+          );
+        }
       } catch (err) {
         console.error("Error fetching top songs:", err);
         setError("Could not load top songs.");
@@ -57,9 +58,7 @@ export default function TopSongs() {
       <section className="music-header">
         <h1 className="music-title">Top Songs</h1>
 
-        <p className="music-username">
-          {user?.displayName || user?.username || "Username"}
-        </p>
+        <p className="music-username">{user?.displayName || "Username"}</p>
       </section>
 
       <div className="filter-buttons">
@@ -74,7 +73,7 @@ export default function TopSongs() {
           className={timeRange === "medium_term" ? "active" : ""}
           onClick={() => setTimeRange("medium_term")}
         >
-          Last Year
+          Last 6 Months
         </button>
 
         <button
@@ -104,9 +103,8 @@ export default function TopSongs() {
               <h2>{song.name}</h2>
 
               <p>
-                {song.artists
-                  ?.map((artist) => artist.name)
-                  .join(", ") || "Artist"}
+                {song.artists?.map((artist) => artist.name).join(", ") ||
+                  "Artist"}
               </p>
             </article>
           ))}
