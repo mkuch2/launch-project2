@@ -22,7 +22,7 @@ export default function NavBar() {
         <NavLink to="/" end>
           Home
         </NavLink>
-        <NavLink to="/liked-songs">Liked</NavLink>
+        <NavLink to="/liked-songs">Liked Songs</NavLink>
         <NavLink to="/top-artists">Top Artists</NavLink>
         <NavLink to="/top-songs">Top Songs</NavLink>
         <NavLink to="/discover">Discover</NavLink>
