@@ -102,7 +102,7 @@ function Home() {
               Discover Users
             </Link>
 
-            <Link to="/forum" className="primary-button">
+            <Link to="/forums" className="primary-button">
               Forums
             </Link>
 
