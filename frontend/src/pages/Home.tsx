@@ -42,7 +42,7 @@ function Home() {
             <h1>Music sounds better together.</h1>
 
             <p className="home-subtitle">
-              Reverb connects Spotify listeners through profiles, music stats,
+              Reverb connects Spotify listeners through profiles,
               forums, discovery, and messaging.
             </p>
 
@@ -61,7 +61,6 @@ function Home() {
 
   const topSongs: Song[] = fullUser.topSongAllTime || [];
   const topArtists: Artist[] = fullUser.topArtistAllTime || [];
-  const likedSongsCount = fullUser.likedSongsCount ?? 0;
 
   return (
     <main className="home-page">
@@ -70,11 +69,6 @@ function Home() {
           <p className="home-kicker">YOUR REVERB</p>
 
           <h1>Welcome back, {fullUser.displayName}</h1>
-
-          <p className="home-subtitle">
-            View your music taste, share your profile, and connect with other
-            listeners.
-          </p>
 
           <div className="home-actions">
 
