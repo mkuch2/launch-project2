@@ -27,9 +27,10 @@ export default function Message(): JSX.Element {
   const [sending, setSending] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
 
-  
-  const userName = (location.state as MessageLocationState)?.userName ?? "User";
-  const recipientId = (location.state as MessageLocationState)?.recipientId;
+  const isNew = conversationId === "new";
+  const userName = (location.state as any)?.userName ?? "User";
+  const recipientId = (location.state as any)?.recipientId;
+  const profilePic = (location.state as any)?.profilePic;
   const userInitials = userName[0]?.toUpperCase() ?? "?";
 
   useEffect(() => {
@@ -90,8 +91,12 @@ export default function Message(): JSX.Element {
       <div className="flex-1 flex flex-col">
         {/* Chat header */}
         <div className="p-6 border-b border-gray-200 bg-white flex items-center gap-4">
-          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-green-400 to-green-600 text-white flex items-center justify-center font-bold text-sm">
-            {userInitials}
+          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-green-400 to-green-600 text-white flex items-center justify-center font-bold text-sm overflow-hidden">
+            {profilePic ? (
+              <img src={profilePic} alt={userName} className="w-full h-full object-cover" />
+            ) : (
+              userInitials
+            )}
           </div>
           <div>
             <h3 className="text-lg font-semibold text-gray-900">{userName}</h3>
