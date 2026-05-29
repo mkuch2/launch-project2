@@ -1,4 +1,4 @@
-import { NavLink, Link, useNavigate } from "react-router";
+import { NavLink, Link, useNavigate, useLocation } from "react-router";
 import { useContext } from "react";
 import { AuthContext } from "../AuthContext";
 
@@ -8,6 +8,7 @@ import SpotifyIcon from "../assets/spotify-icon.svg";
 export default function NavBar() {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const profileImage = user?.profilePic;
   const displayName = user?.displayName || "U";
@@ -19,10 +20,10 @@ export default function NavBar() {
       navigate(path);
     } else{
       const confirmed = confirm (`You need to login to view the ${pageName} page. Go to login?`)
+      if (confirmed) {
+        window.location.href = loginUrl;
+      }
     };
-    if (confirmed) {
-      window.location.href = loginUrl;
-    }
   }
 
   return (
@@ -38,21 +39,21 @@ export default function NavBar() {
         </NavLink>
 
         <button
-          className="nav-button"
+          className={`nav-button ${location.pathname === "/liked-songs" ? "active" : ""}`}
           onClick={() => handleProtectedNav("Liked Songs", "/liked-songs")}
         >
           Liked Songs
         </button>
 
         <button
-          className="nav-button"
+          className={`nav-button ${location.pathname === "/top-artists" ? "active" : ""}`}
           onClick={() => handleProtectedNav("Top Artists", "/top-artists")}
         >
           Top Artists
         </button>
 
         <button
-          className="nav-button"
+          className={`nav-button ${location.pathname === "/top-songs" ? "active" : ""}`}
           onClick={() => handleProtectedNav("Top Songs", "/top-songs")}
         >
           Top Songs
@@ -62,7 +63,7 @@ export default function NavBar() {
         <NavLink to="/forums">Forums</NavLink>
 
         <button
-          className="nav-button"
+          className={`nav-button ${location.pathname === "/inbox" ? "active" : ""}`}
           onClick={() => handleProtectedNav("Inbox", "/inbox")}
         >
           Inbox
