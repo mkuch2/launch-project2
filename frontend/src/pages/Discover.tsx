@@ -1,4 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
+import { Link } from "react-router";
+import { AuthContext } from "../AuthContext";
 import type { PublicUser } from "../../../types";
 import UserCard from "../components/UserCard";
 import "./styles/Discover.css";
@@ -15,6 +17,7 @@ export default function Discover() {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const { user } = useContext(AuthContext);
 
   useEffect(() => {
     async function fetchUsers() {

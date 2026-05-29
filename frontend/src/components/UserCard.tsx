@@ -1,6 +1,9 @@
 import { useNavigate } from "react-router";
+import { useContext } from "react";
+import { AuthContext } from "../AuthContext";
 import type { PublicUser } from "../../../types";
 import "./styles/UserCard.css";
+
 
 // randomly generate avatar color for user profiles
 function getAvatarColor(name: string): string {
@@ -34,44 +37,56 @@ interface UserCardProps {
   user: PublicUser;
 }
 
-export default function UserCard({ user }: UserCardProps) {
+export default function UserCard({ user: publicUser }: UserCardProps) {
   const navigate = useNavigate();
+  const { user } = useContext(AuthContext);
 
   return (
     <div className="user-card">
       <div className="user-card__header">
-        {user.profilePic ? (
+        {publicUser.profilePic ? (
           <img
             className="user-card__avatar-image"
-            src={user.profilePic}
-            alt={user.displayName}
+            src={publicUser.profilePic}
+            alt={publicUser.displayName}
           />
         ) : (
           <div
             className="user-card__avatar"
             style={{
-              backgroundColor: getAvatarColor(user.displayName ?? ""),
+              backgroundColor: getAvatarColor(publicUser.displayName ?? ""),
             }}
           >
-            {getInitials(user.displayName ?? "")}
+            {getInitials(publicUser.displayName ?? "")}
           </div>
         )}
 
-        <span className="user-card__name">{user.displayName}</span>
+        <span className="user-card__name">{publicUser.displayName}</span>
       </div>
 
       <div className="user-card__info">
         <span className="user-card__details">
-          Top artist: {user.topArtistAllTime?.[0]?.name ?? "N/A"} |{" "}
-          {user.likedSongsCount ?? 0} liked songs
+          Top artist: {publicUser.topArtistAllTime?.[0]?.name ?? "N/A"} |{" "}
+          {publicUser.likedSongsCount ?? 0} liked songs
         </span>
-
-        <button
-          className="user-card__button"
-          onClick={() => navigate(`/profile/${user.id}`)}
-        >
-          View Profile
-        </button>
+      
+      <button
+        className="user-card__button"
+        onClick={() => {
+          if (user) {
+            navigate(`/profile/${publicUser.id}`);
+          } else {
+            const confirmed = confirm("You need to login to view profiles. Go to login?");
+            if (confirmed) {
+              window.location.href = `${import.meta.env.VITE_API_URL}/spotify/login`;
+            }
+          }
+        }}
+      >
+        View Profile
+      </button>
+      
+        
       </div>
     </div>
   );
