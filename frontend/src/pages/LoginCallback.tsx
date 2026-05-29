@@ -19,6 +19,7 @@ export default function LoginCallback() {
           `${import.meta.env.VITE_API_URL}/spotify/user-profile`,
           { withCredentials: true },
         );
+        
 
         const profile: PrivateUser = {
           id: profileResponse.data.id,
@@ -43,7 +44,7 @@ export default function LoginCallback() {
             {
               userId: profile.id,
               displayName: profile.displayName,
-              profilePic: profile.profilePic,
+              images: profileResponse.data.images,
             },
           );
 

@@ -66,4 +66,32 @@ router.post("/", async (req, res) => {
   }
 });
 
+router.patch("/:userId", async (req, res) => {
+  const id = req.params.userId ?? null;
+
+  if (!id) {
+    return res.status(400).json({ error: "User id required to update user" });
+  }
+
+  try {
+    const updatedUser = await updateUserById(id, req.body);
+
+    if (!updatedUser) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    res.status(200).json(updatedUser);
+  } catch (err) {
+    if (err instanceof Error) {
+      console.error("Error updating user:", err);
+
+      return res
+        .status(500)
+        .json({ error: err.message || "Failed to update user" });
+    }
+
+    return res.status(500).json({ error: "Unknown error occurred" });
+  }
+});
+
 export { router };

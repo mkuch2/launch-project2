@@ -11,8 +11,8 @@ import Discover from "./pages/Discover.tsx";
 import Forum from "./pages/Forum.tsx";
 import Forums from "./pages/Forums.tsx";
 import Inbox from "./pages/Inbox.tsx";
+import Message from "./pages/Message.tsx";
 import { createBrowserRouter, Outlet, RouterProvider } from "react-router";
-import Login from "./pages/Login.tsx";
 import { AuthProvider } from "./AuthContext.tsx";
 import RequireAuth from "./components/RequireAuth.tsx";
 import AuthAxiosProvider from "./components/AuthAxiosProvider.tsx";
@@ -23,24 +23,32 @@ const skipProtectedRoutes =
 
 const router = createBrowserRouter([
   {
-    path: "/login",
-    element: <Login />,
-  },
-  {
-    path: "/login-callback",
-    element: <LoginCallback />,
-  },
-  {
     path: "/",
-    element: skipProtectedRoutes ? <Outlet /> : <RequireAuth />,
+    element: <App />,
     children: [
       {
-        element: <App />,
+        index: true,
+        element: <Home />,
+      },
+      {
+        path: "login-callback",
+        element: <LoginCallback />,
+      },
+      {
+        path: "discover",
+        element: <Discover />,
+      },
+      {
+        path: "forums",
+        element: <Forums />,
+      },
+      {
+        path: "forum/:forumId",
+        element: <Forum />,
+      },
+      {
+        element: skipProtectedRoutes ? <Outlet /> : <RequireAuth />,
         children: [
-          {
-            index: true,
-            element: <Home />,
-          },
           {
             path: "profile",
             element: <Profile />,
@@ -62,20 +70,12 @@ const router = createBrowserRouter([
             element: <TopSongs />,
           },
           {
-            path: "discover",
-            element: <Discover />,
-          },
-          {
-            path: "forums",
-            element: <Forums />,
-          },
-          {
-            path: "forum/:forumId",
-            element: <Forum />,
-          },
-          {
             path: "inbox",
             element: <Inbox />,
+          },
+          {
+            path: "message/:conversationId",
+            element: <Message />,
           },
         ],
       },

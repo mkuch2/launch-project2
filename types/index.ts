@@ -13,12 +13,21 @@ export interface PublicUser {
   topSongSixMonths: Song[];
   topSongThisMonth: Song[];
   likedSongsCount: number;
+  isPublic?: boolean;
+  showTopSongs?: boolean;
+  showTopArtists?: boolean;
+  showLikedSongs?: boolean;
 }
 
 export interface PrivateUser {
   id: string;
   displayName: string;
   profilePic?: string;
+
+  isPublic?: boolean;
+  showTopSongs?: boolean;
+  showTopArtists?: boolean;
+  showLikedSongs?: boolean;
 }
 
 export interface Conversation {
@@ -53,6 +62,7 @@ export interface Post {
   title: string;
   content: string;
   likes: Number;
+  likedByCurrentUser?: boolean;
   createdAt: Timestamp | FieldValue;
   forumId: string;
 }

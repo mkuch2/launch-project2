@@ -1,4 +1,4 @@
-import { NavLink } from "react-router";
+import { NavLink, Link, useNavigate, useLocation } from "react-router";
 import { useContext } from "react";
 import { AuthContext } from "../AuthContext";
 
@@ -7,9 +7,24 @@ import SpotifyIcon from "../assets/spotify-icon.svg";
 
 export default function NavBar() {
   const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const profileImage = user?.profilePic;
   const displayName = user?.displayName || "U";
+  const loginUrl = `${import.meta.env.VITE_API_URL}/spotify/login`;
+
+  // show login prompt if not logged in, otherwise navigate to page
+  function handleProtectedNav(pageName: string, path: string) {
+    if (user) {
+      navigate(path);
+    } else{
+      const confirmed = confirm (`You need to login to view the ${pageName} page. Go to login?`)
+      if (confirmed) {
+        window.location.href = loginUrl;
+      }
+    };
+  }
 
   return (
     <div className="nav-bar">
@@ -22,12 +37,37 @@ export default function NavBar() {
         <NavLink to="/" end>
           Home
         </NavLink>
-        <NavLink to="/liked-songs">Liked</NavLink>
-        <NavLink to="/top-artists">Top Artists</NavLink>
-        <NavLink to="/top-songs">Top Songs</NavLink>
+
+        <button
+          className={`nav-button ${location.pathname === "/liked-songs" ? "active" : ""}`}
+          onClick={() => handleProtectedNav("Liked Songs", "/liked-songs")}
+        >
+          Liked Songs
+        </button>
+
+        <button
+          className={`nav-button ${location.pathname === "/top-artists" ? "active" : ""}`}
+          onClick={() => handleProtectedNav("Top Artists", "/top-artists")}
+        >
+          Top Artists
+        </button>
+
+        <button
+          className={`nav-button ${location.pathname === "/top-songs" ? "active" : ""}`}
+          onClick={() => handleProtectedNav("Top Songs", "/top-songs")}
+        >
+          Top Songs
+        </button>
+
         <NavLink to="/discover">Discover</NavLink>
         <NavLink to="/forums">Forums</NavLink>
-        <NavLink to="/inbox">Inbox</NavLink>
+
+        <button
+          className={`nav-button ${location.pathname === "/inbox" ? "active" : ""}`}
+          onClick={() => handleProtectedNav("Inbox", "/inbox")}
+        >
+          Inbox
+        </button>
 
         {user ? (
           <NavLink className="profile-link" to="/profile">
@@ -44,9 +84,12 @@ export default function NavBar() {
             )}
           </NavLink>
         ) : (
-          <NavLink className="login-button" to="/login">
+          <Link
+            className="login-button"
+            to={loginUrl}
+          >
             Login
-          </NavLink>
+          </Link>
         )}
       </nav>
     </div>

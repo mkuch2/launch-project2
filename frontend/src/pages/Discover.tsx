@@ -1,13 +1,23 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
+import { Link } from "react-router";
+import { AuthContext } from "../AuthContext";
 import type { PublicUser } from "../../../types";
 import UserCard from "../components/UserCard";
 import "./styles/Discover.css";
 
+type DiscoverUser = PublicUser & {
+  isPublic?: boolean;
+  showTopSongs?: boolean;
+  showTopArtists?: boolean;
+  showLikedSongs?: boolean;
+};
+
 export default function Discover() {
-  const [users, setUsers] = useState<PublicUser[]>([]);
+  const [users, setUsers] = useState<DiscoverUser[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const { user } = useContext(AuthContext);
 
   useEffect(() => {
     async function fetchUsers() {
@@ -15,11 +25,16 @@ export default function Discover() {
         const response = await fetch("http://localhost:5005/api/users", {
           credentials: "include",
         });
+
         if (!response.ok) {
           throw new Error("Failed to fetch users");
         }
-        const data: PublicUser[] = await response.json();
-        setUsers(data);
+
+        const data: DiscoverUser[] = await response.json();
+
+        const publicUsers = data.filter((user) => user.isPublic !== false);
+
+        setUsers(publicUsers);
       } catch (err) {
         setError("Could not load users. Please try again.");
         console.error(err);
@@ -27,17 +42,19 @@ export default function Discover() {
         setIsLoading(false);
       }
     }
+
     fetchUsers();
   }, []);
 
   const filteredUsers = users.filter((user) =>
-    (user.displayName ?? user.username ?? "").toLowerCase().includes(searchQuery.toLowerCase())
+    (user.displayName ?? "").toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   return (
     <div className="discover">
       <div className="discover__header">
         <h1>Discover</h1>
+
         <input
           className="discover__search"
           type="text"
@@ -46,14 +63,18 @@ export default function Discover() {
           onChange={(e) => setSearchQuery(e.target.value)}
         />
       </div>
+
       <div className="discover__list">
         {isLoading && <p className="discover__status">Loading...</p>}
+
         {error && (
           <p className="discover__status discover__status--error">{error}</p>
         )}
+
         {!isLoading && !error && filteredUsers.length === 0 && (
-          <p className="discover__status">No users found.</p>
+          <p className="discover__status">No public users found.</p>
         )}
+
         {!isLoading &&
           !error &&
           filteredUsers.map((user) => <UserCard key={user.id} user={user} />)}

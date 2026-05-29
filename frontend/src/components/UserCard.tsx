@@ -1,20 +1,25 @@
 import { useNavigate } from "react-router";
-import type { PublicUser } from "../types/index";
+import { useContext } from "react";
+import { AuthContext } from "../AuthContext";
+import type { PublicUser } from "../../../types";
 import "./styles/UserCard.css";
+
 
 // randomly generate avatar color for user profiles
 function getAvatarColor(name: string): string {
   const colors = [
-    "#e05c97", // pink
-    "#7c6fcd", // purple
-    "#e8a838", // yellow
-    "#4caf7d", // green
-    "#e05c5c", // red
-    "#5c9ee0", // blue
+    "#e05c97",
+    "#7c6fcd",
+    "#e8a838",
+    "#4caf7d",
+    "#e05c5c",
+    "#5c9ee0",
   ];
+
   const index =
     name.split("").reduce((sum, char) => sum + char.charCodeAt(0), 0) %
     colors.length;
+
   return colors[index];
 }
 
@@ -32,30 +37,56 @@ interface UserCardProps {
   user: PublicUser;
 }
 
-export default function UserCard({ user }: UserCardProps) {
+export default function UserCard({ user: publicUser }: UserCardProps) {
   const navigate = useNavigate();
+  const { user } = useContext(AuthContext);
+
   return (
     <div className="user-card">
       <div className="user-card__header">
-        <div
-          className="user-card__avatar"
-          style={{ backgroundColor: getAvatarColor(user.displayName ?? user.username ?? "") }}
-        >
-          {getInitials(user.displayName ?? user.username ?? "")}
-        </div>
-        <span className="user-card__name">{user.displayName ?? user.username}</span>
+        {publicUser.profilePic ? (
+          <img
+            className="user-card__avatar-image"
+            src={publicUser.profilePic}
+            alt={publicUser.displayName}
+          />
+        ) : (
+          <div
+            className="user-card__avatar"
+            style={{
+              backgroundColor: getAvatarColor(publicUser.displayName ?? ""),
+            }}
+          >
+            {getInitials(publicUser.displayName ?? "")}
+          </div>
+        )}
+
+        <span className="user-card__name">{publicUser.displayName}</span>
       </div>
 
       <div className="user-card__info">
         <span className="user-card__details">
-          Top artist: {user.topArtistAllTime?.[0]?.name ?? "N/A"} | {user.likedSongsCount ?? 0} liked songs
+          Top artist: {publicUser.topArtistAllTime?.[0]?.name ?? "N/A"} |{" "}
+          {publicUser.likedSongsCount ?? 0} liked songs
         </span>
-        <button
-          className="user-card__button"
-          onClick={() => navigate(`/profile/${user.id}`)}
-        >
-          View Profile
-        </button>
+      
+      <button
+        className="user-card__button"
+        onClick={() => {
+          if (user) {
+            navigate(`/profile/${publicUser.id}`);
+          } else {
+            const confirmed = confirm("You need to login to view profiles. Go to login?");
+            if (confirmed) {
+              window.location.href = `${import.meta.env.VITE_API_URL}/spotify/login`;
+            }
+          }
+        }}
+      >
+        View Profile
+      </button>
+      
+        
       </div>
     </div>
   );
