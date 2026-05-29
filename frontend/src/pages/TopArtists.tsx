@@ -51,7 +51,7 @@ export default function TopArtists() {
     };
 
     fetchTopArtists();
-  }, [timeRange]);
+  }, [timeRange, user?.id]);
 
   return (
     <main className="music-page">

@@ -17,23 +17,23 @@ type MessageLocationState = {
 
 export default function Message(): JSX.Element {
   const { conversationId } = useParams();
+  const isNew = conversationId === "new";
   const location = useLocation();
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [messageInput, setMessageInput] = useState("");
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!isNew);
   const [sending, setSending] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
 
-  const isNew = conversationId === "new";
+  
   const userName = (location.state as MessageLocationState)?.userName ?? "User";
   const recipientId = (location.state as MessageLocationState)?.recipientId;
   const userInitials = userName[0]?.toUpperCase() ?? "?";
 
   useEffect(() => {
-    if (isNew) {
-      setLoading(false);
+    if (isNew || !conversationId) {
       return;
     }
     if (!conversationId) return;
