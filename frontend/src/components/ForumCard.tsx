@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Link } from "react-router";
 import type { PrivateUser } from "../../../types";
 import "./styles/ForumCard.css";
 import { Pencil, Trash2, X, Check } from "lucide-react";

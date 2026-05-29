@@ -9,7 +9,6 @@ import CreateForumForm from "../components/ui/CreateForumForm";
 import { useContext } from "react";
 import { AuthContext } from "../AuthContext";
 import { Timestamp } from "firebase/firestore";
-import { useNavigate } from "react-router";
 
 export default function Forums() {
   const { user } = useContext(AuthContext);
@@ -18,7 +17,6 @@ export default function Forums() {
   const [loading, setLoading] = useState(false);
   const [creatingForum, setCreatingForum] = useState(false);
   const [forumName, setForumName] = useState("");
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchForums = async () => {
