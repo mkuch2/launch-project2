@@ -8,7 +8,7 @@ export default async function CICDTest() {
         const data : any = await response.json(); // unused data and any type
     }
     catch (err) {
-        console.error("Error in CICDTest: "+err); // no cause set for error
+        console.log("Error in CICDTest: "+err); // no cause set for error
     }
     return <>
     </>
