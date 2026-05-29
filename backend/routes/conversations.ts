@@ -1,5 +1,5 @@
 import express from "express";
-import { createConversation, getConversations } from "../db/conversations.js";
+import { createConversation, getConversations, markConversationRead } from "../db/conversations.js";
 import { getUsersByIds } from "../db/users.js";
 import type { RequestWithUser } from "../types/request.js";
 import { Conversation } from "../../types/index.js";
@@ -85,6 +85,23 @@ router.post("/", async (req: RequestWithUser, res) => {
     return res.status(500).json({
       message: "Error occurred when creating conversation. Please try again." + (err instanceof Error ? `Details: ${err.message}` : ""),
     });
+  }
+});
+
+router.patch("/:conversationId/read", async (req: RequestWithUser, res) => {
+  const userId = req.user?.id;
+  const { conversationId } = req.params;
+
+  if (!userId || !conversationId) {
+    return res.status(400).json({ message: "userId and conversationId required" });
+  }
+
+  try {
+    await markConversationRead(conversationId, userId);
+    return res.status(200).json({ success: true });
+  } catch (err) {
+    console.error("Error marking conversation as read:", err);
+    return res.status(500).json({ message: "Error marking conversation as read" });
   }
 });
 

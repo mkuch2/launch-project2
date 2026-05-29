@@ -6,6 +6,7 @@ import {
   serverTimestamp,
   getDoc,
   getDocs,
+  updateDoc,
   query,
   orderBy,
   where,
@@ -166,4 +167,24 @@ async function createConversation(
   };
 }
 
-export { createConversation, getConversations };
+async function markConversationRead(conversationId: string, userId: string) {
+  const conversationRef = doc(db, "conversations", conversationId);
+  const conversationSnap = await getDoc(conversationRef);
+
+  if (!conversationSnap.exists()) {
+    throw new Error("Conversation not found");
+  }
+
+  const data = conversationSnap.data();
+  const lastMessage = data?.last_message;
+
+  if (
+    lastMessage &&
+    lastMessage.read === false &&
+    lastMessage.sender_id !== userId
+  ) {
+    await updateDoc(conversationRef, { "last_message.read": true });
+  }
+}
+
+export { createConversation, getConversations, markConversationRead };

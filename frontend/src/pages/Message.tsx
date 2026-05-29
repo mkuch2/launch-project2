@@ -10,31 +10,33 @@ type ChatMessage = {
   content: string;
   sent_at: string;
 };
-type MessageLocationState = {
+
+type LocationState = {
   userName?: string;
   recipientId?: string;
+  profilePic?: string;
 };
 
 export default function Message(): JSX.Element {
   const { conversationId } = useParams();
-  const isNew = conversationId === "new";
   const location = useLocation();
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [messageInput, setMessageInput] = useState("");
-  const [loading, setLoading] = useState(!isNew);
+  const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   const isNew = conversationId === "new";
-  const userName = (location.state as any)?.userName ?? "User";
-  const recipientId = (location.state as any)?.recipientId;
-  const profilePic = (location.state as any)?.profilePic;
+  const userName = (location.state as LocationState)?.userName ?? "User";
+  const recipientId = (location.state as LocationState)?.recipientId;
+  const profilePic = (location.state as LocationState)?.profilePic;
   const userInitials = userName[0]?.toUpperCase() ?? "?";
 
   useEffect(() => {
-    if (isNew || !conversationId) {
+    if (isNew) {
+      setLoading(false);
       return;
     }
     if (!conversationId) return;
@@ -45,6 +47,9 @@ export default function Message(): JSX.Element {
           `${import.meta.env.VITE_API_URL}/api/messages/${conversationId}`,
         );
         setMessages([...data].reverse());
+        await axios.patch(
+          `${import.meta.env.VITE_API_URL}/api/conversations/${conversationId}/read`,
+        );
       } catch (err) {
         console.error("Error fetching messages:", err);
       } finally {

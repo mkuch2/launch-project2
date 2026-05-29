@@ -67,8 +67,31 @@ private in order to hide themselves from the discover feature.
 
 User's can also message other users and see all their messages with other users on the Inbox page.
 
-### Major Components and Features and Feature Status
+### Major Features and Status
 
+| Major Feature | Status |
+|--------------------------|---------|
+| Spotify OAuth Login & Authentication | ✅ Complete |
+| Express Backend Setup | ✅ Complete |
+| Firebase Integration | ✅ Complete |
+| User Creation & Storage | ✅ Complete |
+| Navigation Bar | ✅ Complete |
+| Home Page | ✅ Complete |
+| Discover Page | ✅ Complete |
+| User Profile Page | ✅ Complete |
+| Profile Privacy Settings | ✅ Complete |
+| Top Artists Page | ✅ Complete |
+| Top Songs Page | ✅ Complete |
+| Liked Songs Page | ✅ Complete |
+| Public User Profiles | ✅ Complete |
+| Direct Messaging | ✅ Complete |
+| Inbox Page | ✅ Complete |
+| Discussion Forums | ✅ Complete |
+| Forum Posts | ✅ Complete |
+| Post Likes | ✅ Complete |
+| Forum Search | ✅ Complete |
+| Responsive Design | ✅ Complete |
+| CI/CD Pipeline (GitHub Actions) | ✅ Complete |
 
 ## Credits
 
