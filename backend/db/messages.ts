@@ -38,7 +38,7 @@ async function getMessages(conversationId: string) {
       ...messageDoc.data(),
     }));
   } catch (err) {
-    throw new Error(`Error fetching messages for conversation, cause: ${err}`);
+    throw new Error("Error fetching messages for conversation", { cause: err });
   }
 }
 
@@ -84,7 +84,7 @@ async function sendNewMessage(
       sent_at: messageData!.sent_at,
     };
   } catch (err) {
-    throw new Error(`Error creating new message:, "cause: ${err}`);
+    throw new Error("Error creating new message", { cause: err });
   }
 }
 
