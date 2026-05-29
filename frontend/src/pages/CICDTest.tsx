@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from "react"; // unused imports
+//import { useState, useEffect, useContext } from "react"; // unused imports
 
 export default async function CICDTest() {
     try {
@@ -6,9 +6,10 @@ export default async function CICDTest() {
           credentials: "include",
         });
         const data : any = await response.json(); // unused data and any type
+        console.log(data)
     }
     catch (err) {
-        throw new Error("Error in CICDTest: "+err); // no cause set for error
+        throw new Error("Error in CICDTest: ", err as Error); // no cause set for error
     }
     return <>
     </>
