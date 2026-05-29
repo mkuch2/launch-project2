@@ -152,13 +152,25 @@ export default function Forums() {
         {filteredForums.length > 0 ? (
           filteredForums.map((f) => (
             <div key={f.id} className="forum-preview-container">
-              <Link to={`/forum/${f.id}`}>
+              <div
+                style={{ cursor: "pointer" }}
+                onClick={() => {
+                  if (user) {
+                    window.location.href = `/forum/${f.id}`;
+                  } else {
+                    const confirmed = confirm("You need to login to view this forum. Go to login?");
+                    if (confirmed) {
+                      window.location.href = `${import.meta.env.VITE_API_URL}/spotify/login`;
+                    }
+                  }
+                }}
+              >
                 <ForumCard
                   author={f.author}
                   name={f.name}
                   createdAt={firebaseTimestampToString(f.createdAt)}
                 />
-              </Link>
+              </div>
               {f.author.id === user?.id &&
                 (editingForum && f.id === editedForum ? (
                   <form
@@ -223,7 +235,16 @@ export default function Forums() {
         ) : (
           <button
             className="forum-create-button"
-            onClick={() => setCreatingForum(true)}
+            onClick={() => {
+              if (user) {
+                setCreatingForum(true);
+              } else {
+                const confirmed = confirm("You need to login to create a forum. Go to login?");
+                if (confirmed) {
+                  window.location.href = `${import.meta.env.VITE_API_URL}/spotify/login`;
+                }
+              }
+            }}
           >
             Create new forum
           </button>
