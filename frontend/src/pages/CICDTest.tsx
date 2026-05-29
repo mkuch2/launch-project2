@@ -1,0 +1,16 @@
+//import { useState, useEffect, useContext } from "react"; // unused imports
+
+export default async function CICDTest() {
+    try {
+        const response = await fetch("http://localhost:5005/api/users", {
+          credentials: "include",
+        });
+        const data : {data: string} = await response.json(); // unused data and any type
+        console.log(data)
+    }
+    catch (err) {
+        throw new Error("Error in CICDTest: ", err as Error); // no cause set for error
+    }
+    return <>
+    </>
+}
