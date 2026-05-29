@@ -61,7 +61,7 @@ export default function Inbox(): JSX.Element {
     }
 
     fetchConversations();
-  }, [user?.id]);
+  }, []);
 
   const filtered = useMemo(() => {
     if (!query) return conversations;

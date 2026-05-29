@@ -41,6 +41,9 @@ export default function Message(): JSX.Element {
           `${import.meta.env.VITE_API_URL}/api/messages/${conversationId}`,
         );
         setMessages([...data].reverse());
+        await axios.patch(
+          `${import.meta.env.VITE_API_URL}/api/conversations/${conversationId}/read`,
+        );
       } catch (err) {
         console.error("Error fetching messages:", err);
       } finally {
