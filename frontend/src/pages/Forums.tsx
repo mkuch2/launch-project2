@@ -9,6 +9,7 @@ import CreateForumForm from "../components/ui/CreateForumForm";
 import { useContext } from "react";
 import { AuthContext } from "../AuthContext";
 import { Timestamp } from "firebase/firestore";
+import { useNavigate } from "react-router";
 
 export default function Forums() {
   const { user } = useContext(AuthContext);
@@ -17,6 +18,7 @@ export default function Forums() {
   const [loading, setLoading] = useState(false);
   const [creatingForum, setCreatingForum] = useState(false);
   const [forumName, setForumName] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchForums = async () => {
@@ -163,7 +165,16 @@ export default function Forums() {
         ) : (
           <button
             className="forum-create-button"
-            onClick={() => setCreatingForum(true)}
+            onClick={() => {
+              if (user) {
+                setCreatingForum(true);
+              } else {
+                const confirmed = confirm("You need to login to create a forum. Go to login?");
+                if (confirmed) {
+                  window.location.href = `${import.meta.env.VITE_API_URL}/spotify/login`;
+                }
+              }
+            }}
           >
             Create new forum
           </button>
