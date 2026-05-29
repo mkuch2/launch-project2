@@ -1,4 +1,4 @@
-import express, { Router, Request, Response } from "express";
+import express, { Router, /*Request,*/ Response } from "express";
 import { getMessages, sendNewMessage } from "../db/messages.js";
 import type { RequestWithUser } from "../types/request.js";
 
@@ -52,7 +52,7 @@ router.post(
     } catch (err) {
       return res
         .status(500)
-        .send({ error: "Server error sending message to conversation" });
+        .send({ error: `Server error sending message to conversation, cause: ${err}` });
     }
   },
 );
