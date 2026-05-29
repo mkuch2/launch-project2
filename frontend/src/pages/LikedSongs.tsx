@@ -1,9 +1,11 @@
 import { useState, useEffect, useContext } from "react";
+import { Link } from "react-router";
 import type { Song } from "../../../types";
 import SongCard from "../components/SongCard";
 import "./styles/LikedSongs.css";
 import { AuthContext } from "../AuthContext";
 import axios from "axios";
+
 
 interface SpotifyTrackItem {
   track: {
@@ -26,9 +28,10 @@ export default function LikedSongs() {
   useEffect(() => {
     async function fetchLikedSongs() {
       try {
-        const response = await fetch("http://127.0.0.1:5005/spotify/liked-songs", {
-          credentials: "include",
-        });
+        const response = await fetch(
+          `${import.meta.env.VITE_API_URL}/spotify/liked-songs`,
+          { credentials: "include" }
+        );
 
         if (!response.ok) {
           const errorData = await response.json();
@@ -42,10 +45,9 @@ export default function LikedSongs() {
         const songs: Song[] = data.items.map((item: SpotifyTrackItem) => ({
           id: item.track.id,
           name: item.track.name,
-          album: {
-            images: item.track.album.images,
-          },
-          artists: item.track.artists,
+          albumName: item.track.album.name,
+          albumCover: item.track.album.images[0]?.url ?? "",
+          artists: item.track.artists.map((a) => a.name),
         }));
 
         const songsToSave = songs.slice(0, 10);
@@ -70,7 +72,23 @@ export default function LikedSongs() {
     }
 
     fetchLikedSongs();
-  }, []);
+  }, [user]);
+
+  // Show login prompt if not logged in
+  if (!user) {
+    return (
+      <div className="liked-songs">
+        <h1>Liked Songs</h1>
+        <p className="liked-songs__status">
+          Please{" "}
+          <Link to={`${import.meta.env.VITE_API_URL}/spotify/login`}>
+            login
+          </Link>{" "}
+          to view your liked songs.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="liked-songs">
