@@ -13,17 +13,20 @@ export default function NavBar() {
   const profileImage = user?.profilePic;
   const displayName = user?.displayName || "U";
   const loginUrl = `${import.meta.env.VITE_API_URL}/spotify/login`;
+  const loginPageUrl = `http://127.0.0.1:5173/`;
 
   // show login prompt if not logged in, otherwise navigate to page
   function handleProtectedNav(pageName: string, path: string) {
     if (user) {
       navigate(path);
-    } else{
-      const confirmed = confirm (`You need to login to view the ${pageName} page. Go to login?`)
+    } else {
+      const confirmed = confirm(
+        `You need to login to view the ${pageName} page. Go to login page?`,
+      );
       if (confirmed) {
-        window.location.href = loginUrl;
+        window.location.href = loginPageUrl;
       }
-    };
+    }
   }
 
   return (
@@ -84,10 +87,7 @@ export default function NavBar() {
             )}
           </NavLink>
         ) : (
-          <Link
-            className="login-button"
-            to={loginUrl}
-          >
+          <Link className="login-button" to={loginUrl}>
             Login
           </Link>
         )}

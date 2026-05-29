@@ -46,6 +46,29 @@
   font-size: 1rem;
 }
 
+.profile-identity {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.profile-logout-button {
+  margin-top: 0.75rem;
+  border: none;
+  border-radius: 999px;
+  background-color: #000;
+  color: #fff;
+  padding: 0.65rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.profile-logout-button:hover {
+  background-color: #111;
+}
+
 .profile-card {
   background-color: white;
   padding: 2rem;

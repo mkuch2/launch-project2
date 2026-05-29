@@ -53,7 +53,10 @@ export const firebaseTimestampToString = (
     "seconds" in value &&
     "nanoseconds" in value
   ) {
-    const anyVal = value as any;
+    const anyVal = value as {
+      seconds: unknown;
+      nanoseconds: unknown;
+    };
     const secs = Number(anyVal.seconds);
     const nanos = Number(anyVal.nanoseconds);
     if (!Number.isNaN(secs) && !Number.isNaN(nanos)) {

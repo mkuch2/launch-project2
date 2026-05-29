@@ -4,13 +4,12 @@ import type { Forum } from "../../../types";
 import axios from "axios";
 import { firebaseTimestampToString } from "../utilities/firebaseTimestampToString";
 import "./styles/Forums.css";
-import { Link } from "react-router";
 import Loading from "../components/ui/Loading";
 import CreateForumForm from "../components/ui/CreateForumForm";
 import { useContext } from "react";
 import { AuthContext } from "../AuthContext";
 import { Timestamp } from "firebase/firestore";
-import { Pencil, Trash2 } from "lucide-react";
+import { useNavigate } from "react-router";
 
 export default function Forums() {
   const { user } = useContext(AuthContext);
@@ -18,10 +17,8 @@ export default function Forums() {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [creatingForum, setCreatingForum] = useState(false);
-  const [editingForum, setEditingForum] = useState(false);
   const [forumName, setForumName] = useState("");
-  const [editedForum, setEditedForum] = useState("");
-  const [newForumName, setNewForumName] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchForums = async () => {
@@ -97,26 +94,15 @@ export default function Forums() {
     }
   };
 
-  const handleEditForum = async (
-    id: string,
-    e: React.SubmitEvent<HTMLFormElement>,
-  ) => {
-    e.preventDefault();
-
+  const handleEditForum = async (id: string, name: string) => {
     try {
       await axios.patch(`${import.meta.env.VITE_API_URL}/api/forums/${id}`, {
-        name: newForumName,
+        name,
       });
 
       setForums((prevForums) =>
-        prevForums.map((f) =>
-          f.id === editedForum ? { ...f, name: newForumName } : f,
-        ),
+        prevForums.map((f) => (f.id === id ? { ...f, name } : f)),
       );
-
-      setEditedForum("");
-      setEditingForum(false);
-      setNewForumName("");
     } catch (err) {
       console.error("Error patching forum post: ", err);
     }
@@ -152,71 +138,15 @@ export default function Forums() {
         {filteredForums.length > 0 ? (
           filteredForums.map((f) => (
             <div key={f.id} className="forum-preview-container">
-              <div
-                style={{ cursor: "pointer" }}
-                onClick={() => {
-                  if (user) {
-                    window.location.href = `/forum/${f.id}`;
-                  } else {
-                    const confirmed = confirm("You need to login to view this forum. Go to login?");
-                    if (confirmed) {
-                      window.location.href = `${import.meta.env.VITE_API_URL}/spotify/login`;
-                    }
-                  }
-                }}
-              >
-                <ForumCard
-                  author={f.author}
-                  name={f.name}
-                  createdAt={firebaseTimestampToString(f.createdAt)}
-                />
-              </div>
-              {f.author.id === user?.id &&
-                (editingForum && f.id === editedForum ? (
-                  <form
-                    className="forum-edit-form"
-                    onSubmit={(e) => handleEditForum(f.id, e)}
-                  >
-                    <label htmlFor="edit-name">New name: </label>
-                    <input
-                      className="edit-form-input"
-                      id="edit-name"
-                      name="edit-name"
-                      value={newForumName}
-                      required
-                      onChange={(e) => setNewForumName(e.target.value)}
-                    ></input>
-                    <div className="editting-btn-options">
-                      <button type="submit" className="forum-edit-submit-btn">
-                        Rename
-                      </button>
-                      <button
-                        type="button"
-                        className="cancel-edit-btn"
-                        onClick={() => {
-                          setEditingForum(false);
-                          setEditedForum("");
-                        }}
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  </form>
-                ) : (
-                  <span className="forum-icons-span">
-                    <Pencil
-                      onClick={() => {
-                        setEditingForum(true);
-                        setEditedForum(f.id);
-                      }}
-                      className="forum-icons forum-preview-edit-btn"
-                    />
-                    <Trash2
-                      onClick={() => handleDeleteForum(f.id)}
-                      className="forum-icons forum-preview-delete-btn"
-                    />
-                  </span>
-                ))}
+              <ForumCard
+                forumId={f.id}
+                author={f.author}
+                name={f.name}
+                createdAt={firebaseTimestampToString(f.createdAt)}
+                currentUserId={user?.id}
+                onEdit={handleEditForum}
+                onDelete={handleDeleteForum}
+              />
             </div>
           ))
         ) : (

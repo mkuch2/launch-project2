@@ -4,6 +4,7 @@ import axios from "axios";
 import { AuthContext } from "../AuthContext";
 import type { PrivateUser, Song, Artist } from "../../../types";
 import "./styles/Profile.css";
+import type { Conversation } from "../../../types/index.js";
 
 type ProfileUser = PrivateUser & {
   topSongAllTime?: Song[];
@@ -78,18 +79,30 @@ export default function Profile() {
       const { data: conversations } = await axios.get(
         `${import.meta.env.VITE_API_URL}/api/conversations`,
       );
-      const existing = conversations.find((c: any) => c.otherUser?.id === profileId);
+      const existing = conversations.find(
+        (c: Conversation) => c.otherUser?.id === profileId,
+      );
       if (existing) {
-        navigate(`/message/${existing.id}`, { state: { userName: profile.displayName } });
+        navigate(`/message/${existing.id}`, {
+          state: { userName: profile.displayName },
+        });
       } else {
-        navigate(`/message/new`, { state: { recipientId: profileId, userName: profile.displayName } });
+        navigate(`/message/new`, {
+          state: { recipientId: profileId, userName: profile.displayName },
+        });
       }
     } catch {
-      navigate(`/message/new`, { state: { recipientId: profileId, userName: profile.displayName } });
+      navigate(`/message/new`, {
+        state: { recipientId: profileId, userName: profile.displayName },
+      });
     } finally {
       setMessagingLoading(false);
     }
   }
+
+  const handleLogout = () => {
+    logout();
+  };
 
   if (!profile) {
     return <div className="profile-page">Loading...</div>;
@@ -113,20 +126,29 @@ export default function Profile() {
             <div className="profile-avatar">{profile.displayName?.[0]}</div>
           )}
 
-          <div>
+          <div className="profile-identity">
             <h1 className="profile-title">{profile.displayName}</h1>
             <p className="profile-username">@{profile.displayName}</p>
-          </div>
 
-          {!isOwnProfile && (
-            <button
-              onClick={handleMessageClick}
-              disabled={messagingLoading}
-              className="profile-message-btn"
-            >
-              {messagingLoading ? "..." : "✉ Message"}
-            </button>
-          )}
+            {isOwnProfile && (
+              <button
+                onClick={handleLogout}
+                className="profile-logout-button"
+              >
+                Logout
+              </button>
+            )}
+
+            {!isOwnProfile && (
+              <button
+                onClick={handleMessageClick}
+                disabled={messagingLoading}
+                className="profile-message-btn"
+              >
+                {messagingLoading ? "..." : "✉ Message"}
+              </button>
+            )}
+          </div>
         </div>
 
         {isOwnProfile && (
@@ -216,7 +238,9 @@ export default function Profile() {
         )}
 
         {!showTopSongs && !showTopArtists && !showLikedSongs && (
-          <p className="profile-empty">This user has not shared any music yet.</p>
+          <p className="profile-empty">
+            This user has not shared any music yet.
+          </p>
         )}
       </div>
     </div>
@@ -241,7 +265,10 @@ function ToggleRow({
         <p>{description}</p>
       </div>
 
-      <button className={value ? "toggle toggle-on" : "toggle"} onClick={onClick}>
+      <button
+        className={value ? "toggle toggle-on" : "toggle"}
+        onClick={onClick}
+      >
         <span></span>
       </button>
     </div>

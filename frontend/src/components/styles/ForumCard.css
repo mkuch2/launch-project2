@@ -14,27 +14,155 @@ a {
   min-height: 180px;
 }
 
+.forum-preview__link-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  color: inherit;
+  text-decoration: none;
+  min-width: 0;
+}
+
+.forum-preview__link-area:hover .forum-preview-name {
+  color: #111;
+}
+
 .forum-preview-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 0.75rem;
+  align-items: flex-start;
+  gap: 0.75rem;
+  width: 100%;
 }
 
 .forum-preview-name {
   margin: 0;
   font-size: 1.2rem;
+  min-width: 0;
 }
 
 .forum-preview-author {
   color: #777;
   font-size: 0.95rem;
-  margin-top: auto;
-  align-self: flex-start;
+  min-width: 0;
 }
 
 .forum-preview-timestamp {
   color: #777;
   font-size: 0.9rem;
   text-align: right;
+  flex-shrink: 0;
+}
+
+.forum-preview__footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: auto;
+  padding-top: 0.75rem;
+}
+
+.forum-preview__actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.forum-preview__action-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border: none;
+  background: transparent;
+  color: #777;
+  padding: 0.25rem;
+  font: inherit;
+  cursor: pointer;
+  transition: color 0.15s ease;
+  border-radius: 6px;
+}
+
+.forum-preview__action-button svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.forum-preview__action-button:hover {
+  color: #333;
+}
+
+.forum-preview__edit-button:hover {
+  color: #2563eb;
+}
+
+.forum-preview__delete-button:hover {
+  color: #dc2626;
+}
+
+.forum-preview__edit-input {
+  flex: 1;
+  min-width: 0;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 0.55rem 0.8rem;
+  font: inherit;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #222;
+  background: #fff;
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.forum-preview__edit-input:focus {
+  border-color: #222;
+}
+
+.forum-preview__edit-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+.forum-preview__save-button,
+.forum-preview__cancel-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  border: none;
+  border-radius: 999px;
+  padding: 0.5rem 1rem;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    opacity 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.forum-preview__save-button {
+  background: #222;
+  color: #fff;
+}
+
+.forum-preview__save-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.forum-preview__save-button:not(:disabled):hover {
+  background: #111;
+}
+
+.forum-preview__cancel-button {
+  background: #fff;
+  color: #444;
+  border: 1px solid #ddd;
+}
+
+.forum-preview__cancel-button:hover {
+  background: #f5f5f5;
 }

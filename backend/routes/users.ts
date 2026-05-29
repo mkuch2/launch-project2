@@ -1,7 +1,7 @@
 import express from "express";
 import { db } from "../firebase.js";
-import { getUserById, createNewUser, updateUserById } from "../db/users.js";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { getUserById, createNewUser } from "../db/users.js";
+import { collection, getDocs/*, query, where*/ } from "firebase/firestore";
 import type { PrivateUser } from "../../types";
 
 const router = express.Router();

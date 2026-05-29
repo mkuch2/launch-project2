@@ -38,8 +38,7 @@ async function getForum(forumId: string) {
     const data = snap.data();
     return { id: forumId, ...data } as Forum;
   } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
-    throw new Error(`Error fetching forum by id: ${message || err}`);
+    throw new Error("Error fetching forum by id", { cause: err });
   }
 }
 
