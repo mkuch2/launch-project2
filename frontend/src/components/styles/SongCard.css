@@ -1,43 +1,58 @@
 .song-card {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    padding: 12px 16px;
-    background-color: #ffffff;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-  }
-  
-  .song-card__cover {
-    width: 48px;
-    height: 48px;
-    border-radius: 4px;
-    object-fit: cover;
-    flex-shrink: 0;
-  }
-  
-  .song-card__cover--fallback {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #f0f0f0;
-    color: #888888;
-    font-size: 20px;
-  }
-  
-  .song-card__info {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-  
-  .song-card__name {
-    font-size: 15px;
-    font-weight: 500;
-    color: #2c2c2c;
-  }
-  
-  .song-card__album {
-    font-size: 13px;
-    color: #888888;
-  }
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 16px;
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+}
+
+.song-card__cover {
+  width: 48px;
+  height: 48px;
+  border-radius: 4px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.song-card__cover--fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f0f0f0;
+  color: #888888;
+  font-size: 20px;
+}
+
+.song-card__info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.song-card__name {
+  font-size: 15px;
+  font-weight: 500;
+  color: #2c2c2c;
+}
+
+.song-card__album {
+  font-size: 13px;
+  color: #888888;
+}
+
+.song-card--link {
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  cursor: pointer;
+  transition:
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.song-card--link:hover {
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
+  transform: translateY(-1px);
+}

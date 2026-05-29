@@ -28,7 +28,9 @@ export default function TopSongs() {
           },
         );
 
-       const fetchedSongs = response.data.items || response.data || [];
+        const fetchedSongs = response.data.items || response.data || [];
+
+        console.log("Fetched top songs are: ", fetchedSongs);
 
         const songsToSave = fetchedSongs.slice(0, 10);
 
@@ -91,7 +93,13 @@ export default function TopSongs() {
       {!loading && !error && (
         <section className="music-grid">
           {songs.map((song) => (
-            <article className="music-card" key={song.id}>
+            <a
+              key={song.id}
+              href={song.external_urls?.spotify || "#"}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="music-card"
+            >
               <img
                 src={
                   song.album?.images?.[0]?.url ||
@@ -106,7 +114,7 @@ export default function TopSongs() {
                 {song.artists?.map((artist) => artist.name).join(", ") ||
                   "Artist"}
               </p>
-            </article>
+            </a>
           ))}
         </section>
       )}

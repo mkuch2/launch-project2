@@ -74,6 +74,10 @@ export interface Artist {
   images?: { url: string }[];
 }
 export interface Song {
+  /** Track URL on Spotify, e.g. https://open.spotify.com/track/... */
+  external_urls?: {
+    spotify?: string;
+  };
   id: string;
   name: string;
   artists?: {
