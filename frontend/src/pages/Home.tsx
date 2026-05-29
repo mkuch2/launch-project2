@@ -2,7 +2,7 @@ import { Link } from "react-router";
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../AuthContext";
 import axios from "axios";
-import type { PublicUser } from "../../../types";
+import type { PublicUser, PrivateUser } from "../../../types";
 
 type ForumPreview = {
   id: string;
@@ -12,7 +12,7 @@ type ForumPreview = {
 };
 
 function Home() {
-  const { user } = useContext(AuthContext) as { user: PublicUser | null };
+  const { user } = useContext(AuthContext) as { user: PrivateUser | null };
 
   const [publicUser, setPublicUser] = useState<PublicUser | null>(null);
   const [forums, setForums] = useState<ForumPreview[]>([]);
