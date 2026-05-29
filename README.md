@@ -51,7 +51,8 @@ to the client with a localhost url. package.json is changed to use 'vite --host 
 [Spotify Project (SWE 2026)](https://docs.google.com/document/d/1G1j7hIby7OWzMTbx4_auER4fxZb3ikT-_5ZsOtzgpZA/edit?tab=t.0)
 [Trello](https://trello.com/b/jMjfiavw/launch-project2)
 [Figma](http://figma.com/design/ktIaklmYJd0PZtjGGAq7RD/Spotify-Project?t=sq1cnAQUdWrCc3qX-0)
-[Firebase](https://console.firebase.google.com/u/0/project/spotify-project-b53ac/overview)  
+[Firebase](https://console.firebase.google.com/u/0/project/spotify-project-b53ac/overview) 
+[Presentation](https://canva.link/hgyapq03hq0gn3o)
 ## How to Use Project
 
 Make sure both the frontend and backend are running.
