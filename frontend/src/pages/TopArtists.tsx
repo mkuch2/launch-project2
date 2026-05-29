@@ -31,7 +31,7 @@ export default function TopArtists() {
         const fetchedArtists = response.data.items || response.data || [];
 
         setArtists(fetchedArtists);
-        
+
         const artistsToSave = fetchedArtists.slice(0, 10);
 
         if (user?.id && timeRange === "long_term") {
@@ -89,7 +89,13 @@ export default function TopArtists() {
       {!loading && !error && (
         <section className="music-grid">
           {artists.map((artist) => (
-            <article className="music-card" key={artist.id}>
+            <a
+              key={artist.id}
+              href={artist.external_urls?.spotify || "#"}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="music-card"
+            >
               <img
                 src={
                   artist.images?.[0]?.url || "https://via.placeholder.com/300"
@@ -104,7 +110,7 @@ export default function TopArtists() {
                   ? artist.genres.slice(0, 2).join(", ")
                   : "Artist"}
               </p>
-            </article>
+            </a>
           ))}
         </section>
       )}

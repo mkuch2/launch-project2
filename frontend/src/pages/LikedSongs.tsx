@@ -6,7 +6,6 @@ import "./styles/LikedSongs.css";
 import { AuthContext } from "../AuthContext";
 import axios from "axios";
 
-
 interface SpotifyTrackItem {
   track: {
     id: string;
@@ -16,6 +15,9 @@ interface SpotifyTrackItem {
       images: { url: string }[];
     };
     artists: { name: string }[];
+    external_urls: {
+      spotify?: string;
+    };
   };
 }
 
@@ -30,7 +32,7 @@ export default function LikedSongs() {
       try {
         const response = await fetch(
           `${import.meta.env.VITE_API_URL}/spotify/liked-songs`,
-          { credentials: "include" }
+          { credentials: "include" },
         );
 
         if (!response.ok) {
@@ -42,13 +44,26 @@ export default function LikedSongs() {
 
         const data = await response.json();
 
-        const songs: Song[] = data.items.map((item: SpotifyTrackItem) => ({
-          id: item.track.id,
-          name: item.track.name,
-          albumName: item.track.album.name,
-          albumCover: item.track.album.images[0]?.url ?? "",
-          artists: item.track.artists.map((a) => a.name),
-        }));
+        const songs: Song[] = data.items.map(
+          (item: SpotifyTrackItem, index: number) => {
+            const rawImages = item.track.album?.images;
+            console.log(`LikedSong #${index} raw album.images:`, rawImages);
+
+            return {
+              id: item.track.id,
+              name: item.track.name,
+              album: {
+                name: item.track.album?.name ?? "",
+                images:
+                  rawImages && rawImages.length > 0
+                    ? rawImages.map((img) => ({ url: img.url }))
+                    : [],
+              },
+              artists: item.track.artists?.map((a) => ({ name: a.name })) ?? [],
+              external_urls: item.track.external_urls,
+            };
+          },
+        );
 
         const songsToSave = songs.slice(0, 10);
 
@@ -95,7 +110,11 @@ export default function LikedSongs() {
       <h1>Liked Songs</h1>
 
       {isLoading && <p className="liked-songs__status">Loading...</p>}
-      {error && <p className="liked-songs__status liked-songs__status--error">{error}</p>}
+      {error && (
+        <p className="liked-songs__status liked-songs__status--error">
+          {error}
+        </p>
+      )}
 
       {!isLoading && !error && songs.length === 0 && (
         <p className="liked-songs__status">No liked songs found.</p>

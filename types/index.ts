@@ -70,16 +70,24 @@ export interface Post {
 export interface Artist {
   id: string;
   name: string;
+  external_urls?: {
+    spotify?: string;
+  };
   genres?: string[];
   images?: { url: string }[];
 }
 export interface Song {
+  /** Track URL on Spotify, e.g. https://open.spotify.com/track/... */
+  external_urls?: {
+    spotify?: string;
+  };
   id: string;
   name: string;
   artists?: {
     name: string;
   }[];
   album?: {
+    name?: string;
     images?: {
       url: string;
     }[];

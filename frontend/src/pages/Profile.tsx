@@ -131,10 +131,7 @@ export default function Profile() {
             <p className="profile-username">@{profile.displayName}</p>
 
             {isOwnProfile && (
-              <button
-                onClick={handleLogout}
-                className="profile-logout-button"
-              >
+              <button onClick={handleLogout} className="profile-logout-button">
                 Logout
               </button>
             )}
@@ -229,6 +226,7 @@ export default function Profile() {
           <MusicSection
             title="Liked Songs"
             items={profile.likedSongs}
+            isLikedSong={true}
             emptyMessage={
               isOwnProfile
                 ? "Visit Liked Songs once to add them to your profile."
@@ -279,10 +277,12 @@ function MusicSection({
   title,
   items,
   emptyMessage,
+  isLikedSong = false,
 }: {
   title: string;
   items?: (Song | Artist)[];
   emptyMessage: string;
+  isLikedSong?: boolean;
 }) {
   return (
     <div className="profile-music-section">
@@ -292,23 +292,72 @@ function MusicSection({
         <p className="profile-empty">{emptyMessage}</p>
       ) : (
         <div className="music-grid">
-          {items.map((item) => (
-            <div className="music-card" key={item.id}>
-              {"album" in item && item.album?.images?.[0]?.url && (
-                <img src={item.album.images[0].url} alt={item.name} />
-              )}
+          {items.map((item) => {
+            const spotifyUrl =
+              "external_urls" in item
+                ? (item as Song).external_urls?.spotify
+                : undefined;
 
-              {"images" in item && item.images?.[0]?.url && (
-                <img src={item.images[0].url} alt={item.name} />
-              )}
+            const cardContent = (
+              <>
+                {isLikedSong ? (
+                  "albumCover" in item && item.albumCover && (
+                    <img src={item.albumCover as string} alt={item.name} />
+                  )
+                ) : (
+                  <>
+                    {"album" in item && item.album?.images?.[0]?.url && (
+                      <img
+                        src={item.album.images[0].url}
+                        alt={item.name}
+                      />
+                    )}
+                    {"images" in item && item.images?.[0]?.url && (
+                      <img src={item.images[0].url} alt={item.name} />
+                    )}
+                  </>
+                )}
 
-              <h2>{item.name}</h2>
+                <h2>{item.name}</h2>
 
-              {"artists" in item && item.artists && (
-                <p>{item.artists.map((artist) => artist.name).join(", ")}</p>
-              )}
-            </div>
-          ))}
+                {"artists" in item && item.artists && (
+                  <p>{item.artists.map((artist) => artist.name).join(", ")}</p>
+                )}
+
+                {isLikedSong ? (
+                  "albumName" in item && item.albumName && (
+                    <span className="song-card__album">
+                      {item.albumName as string}
+                    </span>
+                  )
+                ) : (
+                  "album" in item && item.album?.name && (
+                    <span className="song-card__album">{item.album?.name}</span>
+                  )
+                )}
+              </>
+            );
+
+            if (spotifyUrl) {
+              return (
+                <a
+                  key={item.id}
+                  href={spotifyUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="music-card"
+                >
+                  {cardContent}
+                </a>
+              );
+            }
+
+            return (
+              <div className="music-card" key={item.id}>
+                {cardContent}
+              </div>
+            );
+          })}
         </div>
       )}
     </div>
