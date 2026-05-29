@@ -226,6 +226,7 @@ export default function Profile() {
           <MusicSection
             title="Liked Songs"
             items={profile.likedSongs}
+            isLikedSong={true}
             emptyMessage={
               isOwnProfile
                 ? "Visit Liked Songs once to add them to your profile."
@@ -276,10 +277,12 @@ function MusicSection({
   title,
   items,
   emptyMessage,
+  isLikedSong = false,
 }: {
   title: string;
   items?: (Song | Artist)[];
   emptyMessage: string;
+  isLikedSong?: boolean;
 }) {
   return (
     <div className="profile-music-section">
@@ -297,12 +300,22 @@ function MusicSection({
 
             const cardContent = (
               <>
-                {"album" in item && item.album?.images?.[0]?.url && (
-                  <img src={item.album.images[0].url} alt={item.name} />
-                )}
-
-                {"images" in item && item.images?.[0]?.url && (
-                  <img src={item.images[0].url} alt={item.name} />
+                {isLikedSong ? (
+                  "albumCover" in item && item.albumCover && (
+                    <img src={item.albumCover as string} alt={item.name} />
+                  )
+                ) : (
+                  <>
+                    {"album" in item && item.album?.images?.[0]?.url && (
+                      <img
+                        src={item.album.images[0].url}
+                        alt={item.name}
+                      />
+                    )}
+                    {"images" in item && item.images?.[0]?.url && (
+                      <img src={item.images[0].url} alt={item.name} />
+                    )}
+                  </>
                 )}
 
                 <h2>{item.name}</h2>
@@ -311,8 +324,16 @@ function MusicSection({
                   <p>{item.artists.map((artist) => artist.name).join(", ")}</p>
                 )}
 
-                {"album" in item && item.album?.name && (
-                  <span className="song-card__album">{item.album?.name}</span>
+                {isLikedSong ? (
+                  "albumName" in item && item.albumName && (
+                    <span className="song-card__album">
+                      {item.albumName as string}
+                    </span>
+                  )
+                ) : (
+                  "album" in item && item.album?.name && (
+                    <span className="song-card__album">{item.album?.name}</span>
+                  )
                 )}
               </>
             );
