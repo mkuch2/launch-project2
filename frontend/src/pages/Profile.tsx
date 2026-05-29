@@ -131,10 +131,7 @@ export default function Profile() {
             <p className="profile-username">@{profile.displayName}</p>
 
             {isOwnProfile && (
-              <button
-                onClick={handleLogout}
-                className="profile-logout-button"
-              >
+              <button onClick={handleLogout} className="profile-logout-button">
                 Logout
               </button>
             )}
@@ -292,23 +289,54 @@ function MusicSection({
         <p className="profile-empty">{emptyMessage}</p>
       ) : (
         <div className="music-grid">
-          {items.map((item) => (
-            <div className="music-card" key={item.id}>
-              {"album" in item && item.album?.images?.[0]?.url && (
-                <img src={item.album.images[0].url} alt={item.name} />
-              )}
+          {items.map((item) => {
+            const spotifyUrl =
+              "external_urls" in item
+                ? (item as Song).external_urls?.spotify
+                : undefined;
 
-              {"images" in item && item.images?.[0]?.url && (
-                <img src={item.images[0].url} alt={item.name} />
-              )}
+            const cardContent = (
+              <>
+                {"album" in item && item.album?.images?.[0]?.url && (
+                  <img src={item.album.images[0].url} alt={item.name} />
+                )}
 
-              <h2>{item.name}</h2>
+                {"images" in item && item.images?.[0]?.url && (
+                  <img src={item.images[0].url} alt={item.name} />
+                )}
 
-              {"artists" in item && item.artists && (
-                <p>{item.artists.map((artist) => artist.name).join(", ")}</p>
-              )}
-            </div>
-          ))}
+                <h2>{item.name}</h2>
+
+                {"artists" in item && item.artists && (
+                  <p>{item.artists.map((artist) => artist.name).join(", ")}</p>
+                )}
+
+                {"album" in item && item.album?.name && (
+                  <span className="song-card__album">{item.album?.name}</span>
+                )}
+              </>
+            );
+
+            if (spotifyUrl) {
+              return (
+                <a
+                  key={item.id}
+                  href={spotifyUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="music-card"
+                >
+                  {cardContent}
+                </a>
+              );
+            }
+
+            return (
+              <div className="music-card" key={item.id}>
+                {cardContent}
+              </div>
+            );
+          })}
         </div>
       )}
     </div>

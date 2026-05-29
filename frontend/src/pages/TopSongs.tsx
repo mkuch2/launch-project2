@@ -114,6 +114,9 @@ export default function TopSongs() {
                 {song.artists?.map((artist) => artist.name).join(", ") ||
                   "Artist"}
               </p>
+              {song.album?.name && (
+                <span className="song-card__album">{song.album?.name}</span>
+              )}
             </a>
           ))}
         </section>

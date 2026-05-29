@@ -6,8 +6,9 @@ interface SongCardProps {
 }
 
 export default function SongCard({ song }: SongCardProps) {
-  const albumCover = song.album?.images?.[0]?.url || "";
+  const albumCover = song.album?.images?.[0]["url"] ?? "";
   const artistNames = song.artists?.map((artist) => artist.name).join(", ");
+  const albumName = song.album?.name ?? "";
   const spotifyUrl = song.external_urls?.spotify;
 
   const cardContent = (
@@ -20,7 +21,8 @@ export default function SongCard({ song }: SongCardProps) {
 
       <div className="song-card__info">
         <span className="song-card__name">{song.name}</span>
-        <span className="song-card__album">{artistNames}</span>
+        <span className="song-card__artists">{artistNames}</span>
+        {albumName && <span className="song-card__album">{albumName}</span>}
       </div>
     </>
   );

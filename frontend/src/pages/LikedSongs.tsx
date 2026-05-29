@@ -44,14 +44,26 @@ export default function LikedSongs() {
 
         const data = await response.json();
 
-        const songs: Song[] = data.items.map((item: SpotifyTrackItem) => ({
-          id: item.track.id,
-          name: item.track.name,
-          albumName: item.track.album.name,
-          albumCover: item.track.album.images[0]?.url ?? "",
-          artists: item.track.artists.map((a) => a.name),
-          external_urls: item.track.external_urls,
-        }));
+        const songs: Song[] = data.items.map(
+          (item: SpotifyTrackItem, index: number) => {
+            const rawImages = item.track.album?.images;
+            console.log(`LikedSong #${index} raw album.images:`, rawImages);
+
+            return {
+              id: item.track.id,
+              name: item.track.name,
+              album: {
+                name: item.track.album?.name ?? "",
+                images:
+                  rawImages && rawImages.length > 0
+                    ? rawImages.map((img) => ({ url: img.url }))
+                    : [],
+              },
+              artists: item.track.artists?.map((a) => ({ name: a.name })) ?? [],
+              external_urls: item.track.external_urls,
+            };
+          },
+        );
 
         const songsToSave = songs.slice(0, 10);
 
