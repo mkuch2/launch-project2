@@ -8,7 +8,13 @@ type ChatMessage = {
   sender_id: string;
   conversation_id: string;
   content: string;
-  sent_at: any;
+  sent_at: string;
+};
+
+type LocationState = {
+  userName?: string;
+  recipientId?: string;
+  profilePic?: string;
 };
 
 export default function Message(): JSX.Element {
@@ -23,9 +29,9 @@ export default function Message(): JSX.Element {
   const bottomRef = useRef<HTMLDivElement>(null);
 
   const isNew = conversationId === "new";
-  const userName = (location.state as any)?.userName ?? "User";
-  const recipientId = (location.state as any)?.recipientId;
-  const profilePic = (location.state as any)?.profilePic;
+  const userName = (location.state as LocationState)?.userName ?? "User";
+  const recipientId = (location.state as LocationState)?.recipientId;
+  const profilePic = (location.state as LocationState)?.profilePic;
   const userInitials = userName[0]?.toUpperCase() ?? "?";
 
   useEffect(() => {
