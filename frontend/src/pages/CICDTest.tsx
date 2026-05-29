@@ -5,7 +5,7 @@ export default async function CICDTest() {
         const response = await fetch("http://localhost:5005/api/users", {
           credentials: "include",
         });
-        const data : any = await response.json(); // unused data and any type
+        const data : {data: string} = await response.json(); // unused data and any type
         console.log(data)
     }
     catch (err) {
