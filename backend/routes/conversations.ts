@@ -81,9 +81,9 @@ router.post("/", async (req: RequestWithUser, res) => {
       initialMessage,
     );
     return res.status(201).json(newConversation);
-  } catch (_err) {
+  } catch (err) {
     return res.status(500).json({
-      message: "Error occurred when creating conversation. Please try again.",
+      message: "Error occurred when creating conversation. Please try again." + (err instanceof Error ? `Details: ${err.message}` : ""),
     });
   }
 });
