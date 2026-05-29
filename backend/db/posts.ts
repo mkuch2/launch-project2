@@ -1,7 +1,7 @@
 import { db } from "../firebase.js";
 import {
   collection,
-  deleteDoc,
+  /*deleteDoc,*/
   doc,
   getDoc,
   getDocs,

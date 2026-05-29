@@ -2,6 +2,7 @@ import express from "express";
 import { createConversation, getConversations } from "../db/conversations.js";
 import { getUsersByIds } from "../db/users.js";
 import type { RequestWithUser } from "../types/request.js";
+import { Conversation } from "../../types/index.js";
 
 const router = express.Router();
 
@@ -30,14 +31,14 @@ router.get("/", async (req: RequestWithUser, res) => {
 
     const otherUserIds = [
       ...new Set(
-        conversations.flatMap((c: any) =>
+        conversations.flatMap((c: Conversation) =>
           (c.participants as string[]).filter((id) => id !== userId),
         ),
       ),
     ];
     const usersById = await getUsersByIds(otherUserIds);
 
-    const enriched = conversations.map((c: any) => {
+    const enriched = conversations.map((c: Conversation) => {
       const otherUserId = (c.participants as string[]).find((id) => id !== userId);
       return {
         ...c,
@@ -80,7 +81,7 @@ router.post("/", async (req: RequestWithUser, res) => {
       initialMessage,
     );
     return res.status(201).json(newConversation);
-  } catch (err) {
+  } catch (_err) {
     return res.status(500).json({
       message: "Error occurred when creating conversation. Please try again.",
     });

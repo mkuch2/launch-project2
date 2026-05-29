@@ -12,7 +12,7 @@ type ProfileUser = PrivateUser & {
 };
 
 export default function Profile() {
-  const { user, logout } = useContext(AuthContext);
+  const { user/*, logout*/ } = useContext(AuthContext);
   const { userId } = useParams();
 
   const profileId = userId || user?.id;
@@ -78,7 +78,7 @@ export default function Profile() {
       const { data: conversations } = await axios.get(
         `${import.meta.env.VITE_API_URL}/api/conversations`,
       );
-      const existing = conversations.find((c: any) => c.otherUser?.id === profileId);
+      const existing = conversations.find((c: { otherUser?: { id: string } }) => c.otherUser?.id === profileId);
       if (existing) {
         navigate(`/message/${existing.id}`, { state: { userName: profile.displayName } });
       } else {

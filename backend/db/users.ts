@@ -21,7 +21,6 @@ async function getUserById(id: string) {
     const data = snap.data();
     return { id, ...data };
   } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
     throw new Error("Error fetching user by id", { cause: err });
   }
 }
@@ -63,7 +62,6 @@ async function createNewUser(
 
     return { id, ...newUser };
   } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
     throw new Error("Error creating new user", { cause: err });
   }
 }
@@ -98,7 +96,6 @@ async function updateUserById(id: string, updates: Partial<{
 
     return { id, ...snap.data() };
   } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
     throw new Error("Error updating user by id", { cause: err });
   }
 }

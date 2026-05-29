@@ -10,7 +10,7 @@ type Conversation = {
     content: string;
     read: boolean;
     sender_id: string;
-    sent_at: any;
+    sent_at: string;
   };
   otherUser: {
     id: string;
@@ -19,12 +19,12 @@ type Conversation = {
   };
 };
 
-function timeAgo(sentAt: any): string {
+function timeAgo(sentAt: string): string {
   if (!sentAt) return "";
   let ms: number;
-  if (sentAt?.seconds != null) {
-    ms = sentAt.seconds * 1000;
-  } else if (typeof sentAt === "string") {
+  //if (sentAt?.seconds != null) {
+    //ms = sentAt.seconds * 1000;
+  if (typeof sentAt === "string") {
     ms = Date.parse(sentAt);
   } else {
     return "";
